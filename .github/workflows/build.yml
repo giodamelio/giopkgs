@@ -1,0 +1,41 @@
+name: Build Packages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  get-packages:
+    name: Get package list
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.get-packages.outputs.packages }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Get package list
+        id: get-packages
+        run: |
+          packages=$(nix flake show --json | jq -c '.packages."x86_64-linux" | keys')
+          echo "packages=$packages" >> $GITHUB_OUTPUT
+
+  build:
+    name: Build ${{ matrix.package }}
+    needs: get-packages
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJson(needs.get-packages.outputs.packages) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Build ${{ matrix.package }}
+        run: nix build .#packages.x86_64-linux.${{ matrix.package }}
