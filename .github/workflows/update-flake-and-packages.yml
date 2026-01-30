@@ -17,12 +17,16 @@ jobs:
 
       - name: Check flake
         uses: DeterminateSystems/flake-checker-action@main
+        with:
+          send-statistics: false
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
 
       - name: Setup Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@main
+        with:
+          use-flakehub: false
 
       - name: Configure Git
         run: |
@@ -51,6 +55,8 @@ jobs:
 
       - name: Setup Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@main
+        with:
+          use-flakehub: false
 
       - name: Get package list
         id: get-packages
@@ -74,6 +80,8 @@ jobs:
 
       - name: Setup Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@main
+        with:
+          use-flakehub: false
 
       - name: Install nix-update
         run: nix profile install nixpkgs#nix-update
@@ -168,6 +176,8 @@ jobs:
 
       - name: Setup Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@main
+        with:
+          use-flakehub: false
 
       - name: Run flake check
         run: nix flake check
