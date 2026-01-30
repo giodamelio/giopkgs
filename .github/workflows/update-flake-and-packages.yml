@@ -60,6 +60,9 @@ jobs:
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
 
+      - name: Install nix-update
+        run: nix profile install nixpkgs#nix-update
+
       - name: Download flake updates
         uses: actions/download-artifact@v4
         with:
@@ -72,11 +75,13 @@ jobs:
 
       - name: Update ${{ matrix.package }}
         run: |
-          if nix eval --raw ".#${{ matrix.package }}.updateScript" 2>/dev/null; then
-            echo "Running update script for ${{ matrix.package }}..."
-            nix run ".#${{ matrix.package }}.updateScript" || echo "Update failed for ${{ matrix.package }}"
+          # Check if package has a custom update script
+          if script_path=$(nix eval --raw ".#${{ matrix.package }}.updateScript" 2>/dev/null); then
+            echo "Running custom update script for ${{ matrix.package }}..."
+            "$script_path" || echo "Update failed for ${{ matrix.package }}"
           else
-            echo "No update script found for ${{ matrix.package }}"
+            echo "Using default nix-update for ${{ matrix.package }}..."
+            nix-update --flake ${{ matrix.package }} || echo "No update available or update failed for ${{ matrix.package }}"
           fi
 
       - name: Upload package updates
@@ -85,10 +90,12 @@ jobs:
           name: package-updates-${{ matrix.package }}
           path: packages/${{ matrix.package }}/
 
-  create-pr:
-    name: Create Pull Request
+  prepare-for-build:
+    name: Prepare changes for build
     needs: [update-flake, update-packages]
     runs-on: ubuntu-latest
+    outputs:
+      has_changes: ${{ steps.check-changes.outputs.has_changes }}
     steps:
       - uses: actions/checkout@v4
 
@@ -104,17 +111,54 @@ jobs:
           path: packages/
           merge-multiple: true
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+      - name: Check for changes
+        id: check-changes
+        run: |
+          git add flake.lock packages/
+          if git diff --staged --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No changes detected"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected"
+          fi
+
+      - name: Commit to temp branch
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b auto-update-${{ github.run_id }}
+          git commit -m "chore: update flake dependencies and packages"
+          git push origin auto-update-${{ github.run_id }}
+
+  build-updated-packages:
+    name: Build updated packages
+    needs: prepare-for-build
+    if: needs.prepare-for-build.outputs.has_changes == 'true'
+    uses: ./.github/workflows/build.yml
+
+  verify-and-push:
+    name: Verify and push to main
+    needs: [prepare-for-build, build-updated-packages]
+    if: needs.prepare-for-build.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
         with:
-          commit-message: "chore: update flake dependencies and packages"
-          title: "chore: update flake dependencies and packages"
-          body: |
-            Automated updates:
-            - Updated package versions to latest releases
-            - Updated flake.lock dependencies
-          branch: update-flake-and-packages
-          delete-branch: true
-          labels: |
-            dependencies
-            automated
+          ref: auto-update-${{ github.run_id }}
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Run flake check
+        run: nix flake check
+
+      - name: Push to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git push origin auto-update-${{ github.run_id }}:main
+
+      - name: Delete temp branch
+        run: git push origin --delete auto-update-${{ github.run_id }}
