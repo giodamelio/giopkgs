@@ -45,6 +45,8 @@ rustPlatform.buildRustPackage rec {
     darwin.apple_sdk.frameworks.SystemConfiguration
   ];
 
+  passthru.updateScript = ./update.sh;
+
   meta = {
     description = "Tidewave CLI";
     homepage = "https://github.com/tidewave-ai/tidewave_app";

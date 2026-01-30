@@ -1,0 +1,120 @@
+name: Update Flake and Packages
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 0' # Weekly on Sunday at midnight UTC
+
+jobs:
+  update-flake:
+    name: Update flake.lock
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Update flake.lock
+        run: nix flake update
+
+      - name: Upload changes
+        uses: actions/upload-artifact@v4
+        with:
+          name: flake-updates
+          path: flake.lock
+
+  get-packages:
+    name: Get package list
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.get-packages.outputs.packages }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Get package list
+        id: get-packages
+        run: |
+          packages=$(nix flake show --json | jq -c '.packages."x86_64-linux" | keys')
+          echo "packages=$packages" >> $GITHUB_OUTPUT
+
+  update-packages:
+    name: Update ${{ matrix.package }}
+    needs: [update-flake, get-packages]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJson(needs.get-packages.outputs.packages) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Download flake updates
+        uses: actions/download-artifact@v4
+        with:
+          name: flake-updates
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Update ${{ matrix.package }}
+        run: |
+          if nix eval --raw ".#${{ matrix.package }}.updateScript" 2>/dev/null; then
+            echo "Running update script for ${{ matrix.package }}..."
+            nix run ".#${{ matrix.package }}.updateScript" || echo "Update failed for ${{ matrix.package }}"
+          else
+            echo "No update script found for ${{ matrix.package }}"
+          fi
+
+      - name: Upload package updates
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-updates-${{ matrix.package }}
+          path: packages/${{ matrix.package }}/
+
+  create-pr:
+    name: Create Pull Request
+    needs: [update-flake, update-packages]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download flake updates
+        uses: actions/download-artifact@v4
+        with:
+          name: flake-updates
+
+      - name: Download all package updates
+        uses: actions/download-artifact@v4
+        with:
+          pattern: package-updates-*
+          path: packages/
+          merge-multiple: true
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore: update flake dependencies and packages"
+          title: "chore: update flake dependencies and packages"
+          body: |
+            Automated updates:
+            - Updated package versions to latest releases
+            - Updated flake.lock dependencies
+          branch: update-flake-and-packages
+          delete-branch: true
+          labels: |
+            dependencies
+            automated
