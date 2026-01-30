@@ -1,0 +1,10 @@
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -8,7 +8,3 @@
+
+ [workspace.package]
+ version = "0.3.3"
+-
+-[patch.crates-io]
+-# TODO: upstream
+-tao = { git = "https://github.com/wojtekmach/tao.git", branch = "wm-bundled-activation-policy" }

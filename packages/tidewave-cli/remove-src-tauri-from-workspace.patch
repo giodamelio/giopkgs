@@ -1,0 +1,12 @@
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -1,9 +1,8 @@
+ [workspace]
+ resolver = "2"
+ members = [
+     "tidewave-core",
+     "tidewave-cli",
+-    "src-tauri",
+ ]
+
+ [workspace.package]

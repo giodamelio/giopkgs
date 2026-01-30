@@ -13,13 +13,22 @@
         "x86_64-darwin"
         "aarch64-darwin"
       ] (system: function nixpkgs.legacyPackages.${system});
+
+    packagesFor = pkgs: {
+      tidewave-cli = pkgs.callPackage ./packages/tidewave-cli {};
+    };
   in {
+    packages = forAllSystems packagesFor;
+
+    overlays.default = final: prev: packagesFor final;
+
     devShells = forAllSystems (pkgs: {
       default = pkgs.mkShell {
         buildInputs = with pkgs; [
           nix-init # Help scaffold new package automatically
           nurl # Fetch a URL and give a Nix style fetch statement with the correct hash
           nix-update # Easily Auto Update version/src hashs for derivations
+          crate2nix # Help building Rust packages (adding this to handle building a single crate from a workspace)
         ];
       };
     });
