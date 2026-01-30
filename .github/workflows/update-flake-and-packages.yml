@@ -5,6 +5,9 @@ on:
   schedule:
     - cron: '0 0 * * 0' # Weekly on Sunday at midnight UTC
 
+permissions:
+  contents: write
+
 jobs:
   update-flake:
     name: Update flake.lock
@@ -12,8 +15,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check flake
+        uses: DeterminateSystems/flake-checker-action@main
+
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Setup Magic Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
 
       - name: Configure Git
         run: |
@@ -40,6 +49,9 @@ jobs:
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
 
+      - name: Setup Magic Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
+
       - name: Get package list
         id: get-packages
         run: |
@@ -59,6 +71,9 @@ jobs:
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Setup Magic Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
 
       - name: Install nix-update
         run: nix profile install nixpkgs#nix-update
@@ -150,6 +165,9 @@ jobs:
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Setup Magic Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
 
       - name: Run flake check
         run: nix flake check
