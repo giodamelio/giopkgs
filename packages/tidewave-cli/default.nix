@@ -53,6 +53,6 @@ rustPlatform.buildRustPackage rec {
     changelog = "https://github.com/tidewave-ai/tidewave_app/blob/v${version}/CHANGELOG.md";
     license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [ giodamelio ];
-    mainProgram = "tidewave-cli";
+    mainProgram = "tidewave";
   };
 }
