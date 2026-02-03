@@ -16,6 +16,7 @@
 
     packagesFor = pkgs: {
       tidewave-cli = pkgs.callPackage ./packages/tidewave-cli {};
+      mcptools = pkgs.callPackage ./packages/mcptools.nix {};
     };
   in {
     packages = forAllSystems packagesFor;
