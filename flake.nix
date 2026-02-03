@@ -18,6 +18,7 @@
       tidewave-cli = pkgs.callPackage ./packages/tidewave-cli {};
       mcporter = pkgs.callPackage ./packages/mcporter {};
       mcptools = pkgs.callPackage ./packages/mcptools.nix {};
+      crawl4ai = pkgs.callPackage ./pkgs/crawl4ai {};
     };
   in {
     packages = forAllSystems packagesFor;
