@@ -158,15 +158,9 @@ jobs:
           git commit -m "chore: update flake dependencies and packages"
           git push origin auto-update-${{ github.run_id }}
 
-  build-updated-packages:
-    name: Build updated packages
-    needs: prepare-for-build
-    if: needs.prepare-for-build.outputs.has_changes == 'true'
-    uses: ./.github/workflows/build.yml
-
   verify-and-push:
     name: Verify and push to main
-    needs: [prepare-for-build, build-updated-packages]
+    needs: prepare-for-build
     if: needs.prepare-for-build.outputs.has_changes == 'true'
     runs-on: ubuntu-latest
     steps:
@@ -185,11 +179,15 @@ jobs:
       - name: Run flake check
         run: nix flake check
 
-      - name: Push to main
+      - name: Fetch and rebase with main
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git push origin auto-update-${{ github.run_id }}:main
+          git fetch origin main
+          git rebase origin/main
+
+      - name: Push to main
+        run: git push origin HEAD:main
 
       - name: Delete temp branch
         run: git push origin --delete auto-update-${{ github.run_id }}
