@@ -19,6 +19,7 @@
       mcporter = pkgs.callPackage ./packages/mcporter {};
       mcptools = pkgs.callPackage ./packages/mcptools.nix {};
       crawl4ai = pkgs.callPackage ./pkgs/crawl4ai {};
+      handy = pkgs.callPackage ./packages/handy.nix {};
     };
   in {
     packages = forAllSystems packagesFor;
