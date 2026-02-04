@@ -3,7 +3,7 @@ name: Update Flake and Packages
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * 0' # Weekly on Sunday at midnight UTC
+    - cron: '0 10 * * *' # Nightly at 2am PT (10am UTC)
 
 permissions:
   contents: write
