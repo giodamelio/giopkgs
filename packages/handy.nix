@@ -1,20 +1,46 @@
-{pkgs, ...}: let
+{
+  pkgs,
+  lib,
+  ...
+}:
+pkgs.stdenv.mkDerivation rec {
+  pname = "handy";
   version = "0.7.0";
+
+  src = pkgs.fetchurl {
+    url = "https://github.com/cjpais/Handy/releases/download/v${version}/Handy_${version}_amd64.AppImage";
+    hash = "sha256-tTswFYLCPGtMbHAb2bQMsklRiRCVXLrtu4pQC8IHdqQ=";
+  };
+
+  nativeBuildInputs = [pkgs.makeWrapper];
+
   appimage = pkgs.appimageTools.wrapType2 {
-    pname = "handy-appimage-unwrapped";
-    inherit version;
-    src = pkgs.fetchurl {
-      url = "https://github.com/cjpais/Handy/releases/download/v${version}/Handy_${version}_amd64.AppImage";
-      hash = "sha256-tTswFYLCPGtMbHAb2bQMsklRiRCVXLrtu4pQC8IHdqQ=";
-    };
+    inherit pname version src;
     extraPkgs = p:
       with p; [
         alsa-lib
         wtype # For Handy to type into Wayland
       ];
   };
-in
-  pkgs.writeShellScriptBin "handy" ''
-    export WEBKIT_DISABLE_DMABUF_RENDERER=1
-    exec ${appimage}/bin/handy-appimage-unwrapped "$@"
-  ''
+
+  dontUnpack = true;
+  dontBuild = true;
+
+  installPhase = ''
+    runHook preInstall
+
+    mkdir -p $out/bin
+    makeWrapper ${appimage}/bin/${pname} $out/bin/${pname} \
+      --set WEBKIT_DISABLE_DMABUF_RENDERER 1
+
+    runHook postInstall
+  '';
+
+  meta = with lib; {
+    description = "A handy AI assistant";
+    homepage = "https://github.com/cjpais/Handy";
+    license = licenses.mit;
+    platforms = ["x86_64-linux"];
+    maintainers = [];
+  };
+}
