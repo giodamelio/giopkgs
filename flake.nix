@@ -13,18 +13,19 @@
         "x86_64-darwin"
         "aarch64-darwin"
       ] (system: function nixpkgs.legacyPackages.${system});
-
-    packagesFor = pkgs: {
-      tidewave-cli = pkgs.callPackage ./packages/tidewave-cli {};
-      mcporter = pkgs.callPackage ./packages/mcporter {};
-      mcptools = pkgs.callPackage ./packages/mcptools.nix {};
-      crawl4ai = pkgs.callPackage ./pkgs/crawl4ai {};
-      handy = pkgs.callPackage ./packages/handy.nix {};
-    };
   in {
-    packages = forAllSystems packagesFor;
+    packages = forAllSystems (pkgs: 
+      nixpkgs.lib.filesystem.packagesFromDirectoryRecursive {
+        inherit (pkgs) callPackage;
+        directory = ./packages;
+      }
+    );
 
-    overlays.default = final: prev: packagesFor final;
+    overlays.default = final: prev: 
+      nixpkgs.lib.filesystem.packagesFromDirectoryRecursive {
+        callPackage = final.callPackage;
+        directory = ./packages;
+      };
 
     devShells = forAllSystems (pkgs: {
       default = pkgs.mkShell {
