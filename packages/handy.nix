@@ -20,7 +20,7 @@ pkgs.stdenv.mkDerivation rec {
       with p; [
         alsa-lib
         wtype # For Handy to type into Wayland
-        wpctl # For muting system audio while recording
+        wireplumber # For muting system audio while recording
       ];
   };
 
