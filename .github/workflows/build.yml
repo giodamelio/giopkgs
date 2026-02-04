@@ -31,6 +31,12 @@ jobs:
         with:
           use-flakehub: false
 
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v14
+        with:
+          name: giopkgs
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
       - name: Detect changes
         id: detect-changes
         run: |
@@ -95,6 +101,12 @@ jobs:
         uses: DeterminateSystems/magic-nix-cache-action@main
         with:
           use-flakehub: false
+
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v14
+        with:
+          name: giopkgs
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Build ${{ matrix.package }}
         run: nix build .#packages.x86_64-linux.${{ matrix.package }}
