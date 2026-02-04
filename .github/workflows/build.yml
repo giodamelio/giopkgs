@@ -7,13 +7,16 @@ on:
   workflow_call:
 
 jobs:
-  get-packages:
-    name: Get package list
+  detect-changes:
+    name: Detect changed packages
     runs-on: ubuntu-latest
     outputs:
-      packages: ${{ steps.get-packages.outputs.packages }}
+      packages: ${{ steps.detect-changes.outputs.packages }}
+      build_all: ${{ steps.detect-changes.outputs.build_all }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Check flake
         uses: DeterminateSystems/flake-checker-action@main
@@ -28,20 +31,60 @@ jobs:
         with:
           use-flakehub: false
 
-      - name: Get package list
-        id: get-packages
+      - name: Detect changes
+        id: detect-changes
         run: |
-          packages=$(nix flake show --json | jq -c '.packages."x86_64-linux" | keys')
-          echo "packages=$packages" >> $GITHUB_OUTPUT
+          # Get all packages
+          all_packages=$(nix flake show --json | jq -c '.packages."x86_64-linux" | keys')
+          
+          # Check if this is a PR or push
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            base_ref="origin/${{ github.base_ref }}"
+          else
+            # For pushes, compare with previous commit
+            base_ref="HEAD^"
+          fi
+          
+          # Check if flake.nix or flake.lock changed
+          if git diff --name-only "$base_ref" HEAD | grep -qE '^flake\.(nix|lock)$'; then
+            echo "Flake files changed, building all packages"
+            echo "build_all=true" >> $GITHUB_OUTPUT
+            echo "packages=$all_packages" >> $GITHUB_OUTPUT
+          else
+            # Get changed package files
+            changed_files=$(git diff --name-only "$base_ref" HEAD | grep '^packages/' || true)
+            
+            if [ -z "$changed_files" ]; then
+              echo "No package changes detected"
+              echo "build_all=false" >> $GITHUB_OUTPUT
+              echo "packages=[]" >> $GITHUB_OUTPUT
+            else
+              echo "Changed files:"
+              echo "$changed_files"
+              
+              # Extract package names from changed files
+              # This handles both bare .nix files and directories with package.nix
+              changed_packages=$(echo "$changed_files" | \
+                sed -n 's|^packages/\([^/]*\).*|\1|p' | \
+                sed 's/\.nix$//' | \
+                sort -u | \
+                jq -R -s -c 'split("\n") | map(select(length > 0))')
+              
+              echo "Changed packages: $changed_packages"
+              echo "build_all=false" >> $GITHUB_OUTPUT
+              echo "packages=$changed_packages" >> $GITHUB_OUTPUT
+            fi
+          fi
 
   build:
     name: Build ${{ matrix.package }}
-    needs: get-packages
+    needs: detect-changes
+    if: needs.detect-changes.outputs.packages != '[]'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
       matrix:
-        package: ${{ fromJson(needs.get-packages.outputs.packages) }}
+        package: ${{ fromJson(needs.detect-changes.outputs.packages) }}
     steps:
       - uses: actions/checkout@v4
 
