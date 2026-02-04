@@ -122,6 +122,8 @@ jobs:
       has_changes: ${{ steps.check-changes.outputs.has_changes }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Download flake updates
         uses: actions/download-artifact@v4
@@ -167,6 +169,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: auto-update-${{ github.run_id }}
+          fetch-depth: 0
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
@@ -179,15 +182,11 @@ jobs:
       - name: Run flake check
         run: nix flake check
 
-      - name: Fetch and rebase with main
+      - name: Push to main
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git fetch origin main
-          git rebase origin/main
-
-      - name: Push to main
-        run: git push origin HEAD:main
+          git push origin HEAD:main
 
       - name: Delete temp branch
         run: git push origin --delete auto-update-${{ github.run_id }}
