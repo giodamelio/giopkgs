@@ -1,4 +1,4 @@
-name: Update Flake and Packages
+name: Update Packages
 
 on:
   workflow_dispatch:
@@ -9,45 +9,6 @@ permissions:
   contents: write
 
 jobs:
-  update-flake:
-    name: Update flake.lock
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Check flake
-        uses: DeterminateSystems/flake-checker-action@main
-        with:
-          send-statistics: false
-
-      - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@main
-
-      - name: Setup Magic Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@main
-        with:
-          use-flakehub: false
-
-      - name: Setup Cachix
-        uses: cachix/cachix-action@v14
-        with:
-          name: giopkgs
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-
-      - name: Configure Git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Update flake.lock
-        run: nix flake update
-
-      - name: Upload changes
-        uses: actions/upload-artifact@v4
-        with:
-          name: flake-updates
-          path: flake.lock
-
   get-packages:
     name: Get package list
     runs-on: ubuntu-latest
@@ -78,7 +39,7 @@ jobs:
 
   update-packages:
     name: Update ${{ matrix.package }}
-    needs: [update-flake, get-packages]
+    needs: [get-packages]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -103,11 +64,6 @@ jobs:
 
       - name: Install nix-update
         run: nix profile install nixpkgs#nix-update
-
-      - name: Download flake updates
-        uses: actions/download-artifact@v4
-        with:
-          name: flake-updates
 
       - name: Configure Git
         run: |
@@ -152,7 +108,7 @@ jobs:
 
   prepare-for-build:
     name: Prepare changes for build
-    needs: [update-flake, update-packages]
+    needs: [update-packages]
     runs-on: ubuntu-latest
     outputs:
       has_changes: ${{ steps.check-changes.outputs.has_changes }}
@@ -160,11 +116,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Download flake updates
-        uses: actions/download-artifact@v4
-        with:
-          name: flake-updates
 
       - name: Download all package updates
         uses: actions/download-artifact@v4
@@ -176,8 +127,6 @@ jobs:
       - name: Check for changes
         id: check-changes
         run: |
-          # Only add flake.lock and packages directory, exclude any workflow files
-          git add flake.lock
           git add packages/ || true
 
           if git diff --staged --quiet; then
@@ -194,7 +143,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b auto-update-${{ github.run_id }}
-          git commit -m "chore: update flake dependencies and packages"
+          git commit -m "chore: update packages"
           git push origin auto-update-${{ github.run_id }}
 
   verify-and-push:

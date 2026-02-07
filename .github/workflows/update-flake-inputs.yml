@@ -1,0 +1,65 @@
+name: Update Flake Inputs
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 9 * * 0' # Sundays at 1am PT (9am UTC), 1 hour before nightly packages update
+
+permissions:
+  contents: write
+
+jobs:
+  update-flake:
+    name: Update flake.lock
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check flake
+        uses: DeterminateSystems/flake-checker-action@main
+        with:
+          send-statistics: false
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Setup Magic Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
+        with:
+          use-flakehub: false
+
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v14
+        with:
+          name: giopkgs
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Update flake.lock
+        run: nix flake update
+
+      - name: Check for changes
+        id: check-changes
+        run: |
+          if git diff --quiet flake.lock; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No changes to flake.lock"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "flake.lock has changes"
+          fi
+
+      - name: Run flake check
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: nix flake check
+
+      - name: Commit and push
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          git add flake.lock
+          git commit -m "chore: update flake inputs"
+          git push origin main
