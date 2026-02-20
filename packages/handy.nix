@@ -5,11 +5,11 @@
 }:
 pkgs.stdenv.mkDerivation rec {
   pname = "handy";
-  version = "0.7.6";
+  version = "0.7.7";
 
   src = pkgs.fetchurl {
     url = "https://github.com/cjpais/Handy/releases/download/v${version}/Handy_${version}_amd64.AppImage";
-    hash = "sha256-UZNt3lfKo6dBRWK1YD03HmcZsx/Zu2J3eD5VdTw+poU=";
+    hash = "sha256-76Hno39I3+46blnVW6XWwg944vF5n7IdMYXGMlYMNb0=";
   };
 
   nativeBuildInputs = [pkgs.makeWrapper];
