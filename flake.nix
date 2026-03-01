@@ -12,7 +12,10 @@
         "aarch64-linux"
         "x86_64-darwin"
         "aarch64-darwin"
-      ] (system: function nixpkgs.legacyPackages.${system});
+      ] (system: function (import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+      }));
   in {
     packages = forAllSystems (pkgs: 
       nixpkgs.lib.filesystem.packagesFromDirectoryRecursive {
