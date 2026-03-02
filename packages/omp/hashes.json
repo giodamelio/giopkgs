@@ -1,9 +1,9 @@
 {
   "owner": "giodamelio",
   "repo": "oh-my-pi",
-  "rev": "c14369da3e60850fbfe6aad386bb3bc85d78e70f",
-  "version": "c14369d",
-  "srcHash": "sha256-8bFQb6iPz41gcH9rh633SQ1w5sZmXds8SyjvrX54ff8=",
+  "rev": "8c5541c4c6abd20cb6daca97b3cedd29aa0e3b06",
+  "version": "8c5541c",
+  "srcHash": "sha256-cW4/ggB70iXNGZmj/78ciE4bj1QoIOcmmY5WL/zfOKY=",
   "cargoHash": "sha256-Yowivmm/g54XtzRevHjCmhtkwVkxkM15Rp5XEpMMFa0=",
   "nodeModulesHashes": {
     "x86_64-linux": "sha256-dU6287iiQhEULW4F3f8t4DylKAIxxkC/5164d10ZVjU=",
