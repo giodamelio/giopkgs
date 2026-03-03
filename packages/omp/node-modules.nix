@@ -7,69 +7,76 @@
   cacert,
   ompHashes ? builtins.fromJSON (builtins.readFile ./hashes.json),
   hash ? ompHashes.nodeModulesHashes.${stdenvNoCC.hostPlatform.system},
-}:
-let
+}: let
   platform = stdenvNoCC.hostPlatform;
-  bunCpu = if platform.isAarch64 then "arm64" else "x64";
-  bunOs = if platform.isLinux then "linux" else "darwin";
+  bunCpu =
+    if platform.isAarch64
+    then "arm64"
+    else "x64";
+  bunOs =
+    if platform.isLinux
+    then "linux"
+    else "darwin";
 in
-stdenvNoCC.mkDerivation {
-  pname = "omp-node_modules";
-  version = ompHashes.version;
+  stdenvNoCC.mkDerivation {
+    pname = "omp-node_modules";
+    version = ompHashes.version;
 
-  src = builtins.fetchTarball {
-    url = "https://github.com/${ompHashes.owner}/${ompHashes.repo}/archive/${ompHashes.rev}.tar.gz";
-    sha256 = ompHashes.srcHash;
-  };
+    src = builtins.fetchTarball {
+      url = "https://github.com/${ompHashes.owner}/${ompHashes.repo}/archive/${ompHashes.rev}.tar.gz";
+      sha256 = ompHashes.srcHash;
+    };
 
-  impureEnvVars = lib.fetchers.proxyImpureEnvVars ++ [
-    "GIT_PROXY_COMMAND"
-    "SOCKS_SERVER"
-  ];
+    impureEnvVars =
+      lib.fetchers.proxyImpureEnvVars
+      ++ [
+        "GIT_PROXY_COMMAND"
+        "SOCKS_SERVER"
+      ];
 
-  nativeBuildInputs = [ bun cacert ];
+    nativeBuildInputs = [bun cacert];
 
-  dontConfigure = true;
+    dontConfigure = true;
 
-  buildPhase = ''
-    runHook preBuild
+    buildPhase = ''
+      runHook preBuild
 
-    export HOME=$(mktemp -d)
-    export BUN_INSTALL_CACHE_DIR=$(mktemp -d)
-    export SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt
+      export HOME=$(mktemp -d)
+      export BUN_INSTALL_CACHE_DIR=$(mktemp -d)
+      export SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt
 
-    bun install \
-      --cpu="${bunCpu}" \
-      --os="${bunOs}" \
-      --frozen-lockfile \
-      --ignore-scripts \
-      --no-progress
+      bun install \
+        --cpu="${bunCpu}" \
+        --os="${bunOs}" \
+        --frozen-lockfile \
+        --ignore-scripts \
+        --no-progress
 
-    bun --bun ${./scripts/canonicalize-node-modules.ts}
-    bun --bun ${./scripts/normalize-bun-binaries.ts}
+      bun --bun ${./scripts/canonicalize-node-modules.ts}
+      bun --bun ${./scripts/normalize-bun-binaries.ts}
 
-    runHook postBuild
-  '';
+      runHook postBuild
+    '';
 
-  installPhase = ''
-    runHook preInstall
+    installPhase = ''
+      runHook preInstall
 
-    mkdir -p $out
-    find . -type d -name node_modules -exec cp -R --parents {} $out \;
+      mkdir -p $out
+      find . -type d -name node_modules -exec cp -R --parents {} $out \;
 
-    runHook postInstall
-  '';
+      runHook postInstall
+    '';
 
-  dontFixup = true;
+    dontFixup = true;
 
-  outputHashAlgo = "sha256";
-  outputHashMode = "recursive";
-  outputHash = hash;
+    outputHashAlgo = "sha256";
+    outputHashMode = "recursive";
+    outputHash = hash;
 
-  meta.platforms = [
-    "aarch64-linux"
-    "x86_64-linux"
-    "aarch64-darwin"
-    "x86_64-darwin"
-  ];
-}
+    meta.platforms = [
+      "aarch64-linux"
+      "x86_64-linux"
+      "aarch64-darwin"
+      "x86_64-darwin"
+    ];
+  }

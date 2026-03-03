@@ -1,13 +1,13 @@
-{ lib
-, stdenv
-, fetchFromGitHub
-, fetchPnpmDeps
-, nodejs
-, pnpm_10
-, pnpmConfigHook
-, makeWrapper
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  fetchPnpmDeps,
+  nodejs,
+  pnpm_10,
+  pnpmConfigHook,
+  makeWrapper,
 }:
-
 stdenv.mkDerivation (finalAttrs: {
   pname = "mcporter";
   version = "0.7.3";
@@ -41,14 +41,14 @@ stdenv.mkDerivation (finalAttrs: {
 
   installPhase = ''
     runHook preInstall
-    
+
     mkdir -p $out/lib/node_modules/mcporter
     cp -r . $out/lib/node_modules/mcporter
-    
+
     mkdir -p $out/bin
     makeWrapper ${nodejs}/bin/node $out/bin/mcporter \
       --add-flags $out/lib/node_modules/mcporter/dist/cli.js
-    
+
     runHook postInstall
   '';
 
@@ -57,7 +57,7 @@ stdenv.mkDerivation (finalAttrs: {
     homepage = "https://github.com/steipete/mcporter";
     changelog = "https://github.com/steipete/mcporter/blob/v${finalAttrs.version}/CHANGELOG.md";
     license = lib.licenses.mit;
-    maintainers = with lib.maintainers; [ giodamelio ];
+    maintainers = with lib.maintainers; [giodamelio];
     mainProgram = "mcporter";
     platforms = lib.platforms.all;
   };

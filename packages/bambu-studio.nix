@@ -19,8 +19,8 @@ pkgs.appimageTools.wrapType2 rec {
     export GIO_MODULE_DIR="${pkgs.glib-networking}/lib/gio/modules/"
   '';
 
-  extraPkgs =
-    pkgs: with pkgs; [
+  extraPkgs = pkgs:
+    with pkgs; [
       cacert
       glib
       glib-networking

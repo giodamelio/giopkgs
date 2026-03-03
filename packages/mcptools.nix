@@ -3,7 +3,6 @@
   buildGoModule,
   fetchFromGitHub,
 }:
-
 buildGoModule rec {
   pname = "mcptools";
   version = "0.7.1";
@@ -28,7 +27,7 @@ buildGoModule rec {
     description = "A command-line interface for interacting with MCP (Model Context Protocol) servers using both stdio and HTTP transport";
     homepage = "https://github.com/f/mcptools";
     license = lib.licenses.mit;
-    maintainers = with lib.maintainers; [ ];
+    maintainers = with lib.maintainers; [];
     mainProgram = "mcptools";
   };
 }

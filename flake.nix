@@ -5,26 +5,31 @@
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
   };
 
-  outputs = { self, nixpkgs }: let
+  outputs = {
+    self,
+    nixpkgs,
+  }: let
     forAllSystems = function:
       nixpkgs.lib.genAttrs [
         "x86_64-linux"
         "aarch64-linux"
         "x86_64-darwin"
         "aarch64-darwin"
-      ] (system: function (import nixpkgs {
-        inherit system;
-        config.allowUnfree = true;
-      }));
+      ] (system:
+        function (import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+        }));
   in {
-    packages = forAllSystems (pkgs: 
-      nixpkgs.lib.filesystem.packagesFromDirectoryRecursive {
-        inherit (pkgs) callPackage;
-        directory = ./packages;
-      }
+    packages = forAllSystems (
+      pkgs:
+        nixpkgs.lib.filesystem.packagesFromDirectoryRecursive {
+          inherit (pkgs) callPackage;
+          directory = ./packages;
+        }
     );
 
-    overlays.default = final: prev: 
+    overlays.default = final: prev:
       nixpkgs.lib.filesystem.packagesFromDirectoryRecursive {
         callPackage = final.callPackage;
         directory = ./packages;

@@ -1,9 +1,9 @@
-{ lib
-, python3
-, fetchFromGitHub
-, playwright-driver
+{
+  lib,
+  python3,
+  fetchFromGitHub,
+  playwright-driver,
 }:
-
 python3.pkgs.buildPythonPackage rec {
   pname = "crawl4ai";
   version = "0.8.0";
@@ -65,11 +65,11 @@ python3.pkgs.buildPythonPackage rec {
 
   # Optional dependencies can be added via overrides
   passthru.optional-dependencies = with python3.pkgs; {
-    pdf = [ pypdf ];
-    torch = [ pytorch nltk scikit-learn ];
-    transformer = [ transformers tokenizers sentence-transformers ];
-    cosine = [ pytorch transformers nltk sentence-transformers ];
-    sync = [ selenium ];
+    pdf = [pypdf];
+    torch = [pytorch nltk scikit-learn];
+    transformer = [transformers tokenizers sentence-transformers];
+    cosine = [pytorch transformers nltk sentence-transformers];
+    sync = [selenium];
   };
 
   # Skip import check as it tries to create directories in HOME
@@ -78,9 +78,9 @@ python3.pkgs.buildPythonPackage rec {
   # Don't check runtime dependencies strictly as some packages have version mismatches
   # or are not available in nixpkgs (patchright, tf-playwright-stealth, alphashape)
   pythonRemoveDeps = [
-    "patchright"  # Not in nixpkgs, playwright is sufficient
-    "tf-playwright-stealth"  # Not in nixpkgs
-    "alphashape"  # Not in nixpkgs
+    "patchright" # Not in nixpkgs, playwright is sufficient
+    "tf-playwright-stealth" # Not in nixpkgs
+    "alphashape" # Not in nixpkgs
   ];
 
   pythonRelaxDeps = [
@@ -102,7 +102,7 @@ python3.pkgs.buildPythonPackage rec {
     description = "Open-source LLM Friendly Web Crawler & scraper";
     homepage = "https://github.com/unclecode/crawl4ai";
     license = licenses.asl20;
-    maintainers = with maintainers; [ ];
+    maintainers = with maintainers; [];
     mainProgram = "crwl";
   };
 }

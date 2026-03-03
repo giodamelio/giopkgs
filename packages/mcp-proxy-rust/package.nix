@@ -4,7 +4,6 @@
   fetchFromGitHub,
   perl,
 }:
-
 rustPlatform.buildRustPackage rec {
   pname = "mcp-proxy";
   version = "0.2.3";
@@ -24,7 +23,7 @@ rustPlatform.buildRustPackage rec {
   };
 
   # perl is needed to build vendored openssl
-  nativeBuildInputs = [ perl ];
+  nativeBuildInputs = [perl];
 
   # Tests require example binaries that aren't built
   doCheck = false;
@@ -34,7 +33,7 @@ rustPlatform.buildRustPackage rec {
     homepage = "https://github.com/tidewave-ai/mcp_proxy_rust";
     changelog = "https://github.com/tidewave-ai/mcp_proxy_rust/blob/${src.rev}/CHANGELOG.md";
     license = lib.licenses.unfree; # No license file in repository
-    maintainers = with lib.maintainers; [ ];
+    maintainers = with lib.maintainers; [];
     mainProgram = "mcp-proxy";
   };
 }

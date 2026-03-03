@@ -11,7 +11,9 @@ pkgs.qutebrowser.overrideAttrs (oldAttrs: {
     hash = "sha256-WT6NYEOdHBRbXxn6/9LNS/9sSwIUu7Dl+OYwbeLwyXg=";
   };
 
-  meta = oldAttrs.meta // {
-    description = "qutebrowser from giodamelio's fork";
-  };
+  meta =
+    oldAttrs.meta
+    // {
+      description = "qutebrowser from giodamelio's fork";
+    };
 })
