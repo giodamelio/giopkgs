@@ -1,0 +1,14 @@
+repos:
+  - repo: local
+    hooks:
+      - id: alejandra
+        name: Format Nix files
+        language: system
+        entry: alejandra
+        files: '\.nix$'
+
+      - id: nix-build-dry-run
+        name: Check packages evaluate
+        language: system
+        entry: nix flake check --no-build
+        pass_filenames: false
