@@ -4,7 +4,7 @@
   ...
 }:
 pkgs.qutebrowser.overrideAttrs (oldAttrs: {
-  version = "3.6.3-unstable-2026-03-03-e48c8c5";
+  version = "3.6.3";
 
   src = pkgs.fetchFromGitHub {
     owner = "giodamelio";
