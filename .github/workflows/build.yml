@@ -40,8 +40,8 @@ jobs:
       - name: Detect changes
         id: detect-changes
         run: |
-          # Get all packages
-          all_packages=$(nix flake show --json | jq -c '.packages."x86_64-linux" | keys')
+          # Get all packages - use nix eval which is more reliable than flake show
+          all_packages=$(nix eval --json '.#packages.x86_64-linux' --apply 'builtins.attrNames')
           
           # Check if this is a PR or push
           if [ "${{ github.event_name }}" == "pull_request" ]; then
