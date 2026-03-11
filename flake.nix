@@ -20,6 +20,24 @@
           inherit system;
           config.allowUnfree = true;
         }));
+
+    # Collect passthru.tests from all packages into checks
+    collectTests = packages:
+      nixpkgs.lib.foldlAttrs (
+        acc: name: pkg:
+          acc
+          // (
+            if pkg ? passthru.tests
+            then
+              nixpkgs.lib.mapAttrs' (
+                testName: test:
+                  nixpkgs.lib.nameValuePair "${name}-${testName}" test
+              )
+              pkg.passthru.tests
+            else {}
+          )
+      ) {}
+      packages;
   in {
     packages = forAllSystems (
       pkgs:
@@ -28,6 +46,8 @@
           directory = ./packages;
         }
     );
+
+    checks = forAllSystems (pkgs: collectTests self.packages.${pkgs.system});
 
     overlays.default = final: prev:
       nixpkgs.lib.filesystem.packagesFromDirectoryRecursive {
