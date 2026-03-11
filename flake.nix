@@ -47,7 +47,9 @@
         }
     );
 
-    checks = forAllSystems (pkgs: collectTests self.packages.${pkgs.system});
+    checks = nixpkgs.lib.genAttrs ["x86_64-linux" "aarch64-linux"] (system:
+      collectTests self.packages.${system}
+    );
 
     overlays.default = final: prev:
       nixpkgs.lib.filesystem.packagesFromDirectoryRecursive {
