@@ -39,7 +39,7 @@ jobs:
 
       - name: Detect changes
         id: detect-changes
-        run: ./.github/workflows/detect-changes.sh "${{ github.event_name }}" "${{ github.base_ref }}"
+        run: ./scripts/detect-changes.sh "${{ github.event_name }}" "${{ github.base_ref }}"
 
   build:
     name: Build ${{ matrix.package }}

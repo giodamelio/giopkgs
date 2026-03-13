@@ -47,13 +47,14 @@
         }
     );
 
-    checks = nixpkgs.lib.genAttrs ["x86_64-linux" "aarch64-linux"] (system:
-      collectTests self.packages.${system}
+    checks = nixpkgs.lib.genAttrs ["x86_64-linux" "aarch64-linux"] (
+      system:
+        collectTests self.packages.${system}
     );
 
-    overlays.default = final: prev:
+    overlays.default = final: _prev:
       nixpkgs.lib.filesystem.packagesFromDirectoryRecursive {
-        callPackage = final.callPackage;
+        inherit (final) callPackage;
         directory = ./packages;
       };
 

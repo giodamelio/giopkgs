@@ -1,8 +1,4 @@
-{
-  pkgs,
-  lib,
-  ...
-}:
+{pkgs, ...}:
 pkgs.qutebrowser.overrideAttrs (oldAttrs: {
   version = "3.6.3";
 

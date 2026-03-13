@@ -34,7 +34,7 @@ jobs:
       - name: Get package list
         id: get-packages
         run: |
-          packages=$(./.github/workflows/list-packages.sh)
+          packages=$(./scripts/list-packages.sh)
           echo "packages=$packages" >> $GITHUB_OUTPUT
 
   update-packages:
@@ -71,30 +71,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Update ${{ matrix.package }}
-        run: |
-          # Get current version before update
-          old_version=$(nix eval --raw ".#${{ matrix.package }}.version" 2>/dev/null || echo "unknown")
-          
-          # Check if package has a custom update script
-          if script_path=$(nix eval --raw ".#${{ matrix.package }}.updateScript" 2>/dev/null); then
-            echo "Running custom update script for ${{ matrix.package }}..."
-            "$script_path" || echo "Update failed for ${{ matrix.package }}"
-          else
-            echo "Using default nix-update for ${{ matrix.package }}..."
-            nix-update --flake ${{ matrix.package }} || echo "No update available or update failed for ${{ matrix.package }}"
-          fi
-          
-          # Get new version after update
-          new_version=$(nix eval --raw ".#${{ matrix.package }}.version" 2>/dev/null || echo "unknown")
-          
-          # Write job summary
-          if [ "$old_version" = "$new_version" ]; then
-            echo "### ${{ matrix.package }}" >> $GITHUB_STEP_SUMMARY
-            echo "No update available (current version: \`$old_version\`)" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "### ${{ matrix.package }}" >> $GITHUB_STEP_SUMMARY
-            echo "Updated: \`$old_version\` → \`$new_version\`" >> $GITHUB_STEP_SUMMARY
-          fi
+        run: ./scripts/update-package.sh "${{ matrix.package }}"
 
       - name: Upload package updates
         uses: actions/upload-artifact@v4

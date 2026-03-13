@@ -20,7 +20,7 @@
 in
   stdenvNoCC.mkDerivation {
     pname = "omp-node_modules";
-    version = ompHashes.version;
+    inherit (ompHashes) version;
 
     src = builtins.fetchTarball {
       url = "https://github.com/${ompHashes.owner}/${ompHashes.repo}/archive/${ompHashes.rev}.tar.gz";

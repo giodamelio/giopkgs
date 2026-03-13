@@ -1,5 +1,6 @@
 #!/usr/bin/env nix-shell
 #! nix-shell -i bash -p jq
+# shellcheck shell=bash
 # Update all packages in the flake
 
 set -euo pipefail

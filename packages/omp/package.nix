@@ -22,8 +22,7 @@
   fenixSrc = fetchFromGitHub {
     owner = "nix-community";
     repo = "fenix";
-    rev = ompHashes.fenix.rev;
-    hash = ompHashes.fenix.hash;
+    inherit (ompHashes.fenix) rev hash;
   };
   fenix = import fenixSrc {inherit (stdenv.hostPlatform) system;};
 
@@ -58,9 +57,7 @@
   }";
 
   src = fetchFromGitHub {
-    owner = ompHashes.owner;
-    repo = ompHashes.repo;
-    rev = ompHashes.rev;
+    inherit (ompHashes) owner repo rev;
     hash = ompHashes.srcHash;
   };
 
@@ -71,7 +68,7 @@
 in
   stdenv.mkDerivation {
     pname = "omp";
-    version = ompHashes.version;
+    inherit (ompHashes) version;
     inherit src;
 
     nativeBuildInputs = [

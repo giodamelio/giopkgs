@@ -1,8 +1,4 @@
-{
-  pkgs,
-  lib,
-  ...
-}:
+{pkgs, ...}:
 pkgs.waybar.overrideAttrs (oldAttrs: {
   patches =
     (oldAttrs.patches or [])
