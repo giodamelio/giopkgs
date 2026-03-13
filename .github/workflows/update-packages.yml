@@ -34,7 +34,7 @@ jobs:
       - name: Get package list
         id: get-packages
         run: |
-          packages=$(nix flake show --json | jq -c '.packages."x86_64-linux" | keys')
+          packages=$(./.github/workflows/list-packages.sh)
           echo "packages=$packages" >> $GITHUB_OUTPUT
 
   update-packages:
