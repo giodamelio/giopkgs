@@ -66,6 +66,9 @@
           crate2nix # Help building Rust packages (adding this to handle building a single crate from a workspace)
           prek # Git Hooks
           alejandra # Nix formatting
+          shellcheck # Shell script linting
+          statix # Nix linting
+          deadnix # Find dead Nix code
         ];
         shellHook = ''
           prek install

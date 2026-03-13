@@ -1,6 +1,19 @@
 repos:
   - repo: local
     hooks:
+      - id: statix
+        name: Lint Nix files
+        language: system
+        entry: statix check
+        files: '\.nix$'
+        pass_filenames: false
+
+      - id: deadnix
+        name: Find dead Nix code
+        language: system
+        entry: deadnix --fail
+        files: '\.nix$'
+
       - id: alejandra
         name: Format Nix files
         language: system
@@ -12,3 +25,9 @@ repos:
         language: system
         entry: nix flake check --no-build
         pass_filenames: false
+
+      - id: shellcheck
+        name: Lint shell scripts
+        language: system
+        entry: shellcheck
+        files: '\.sh$'
