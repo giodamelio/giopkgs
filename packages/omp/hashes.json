@@ -1,12 +1,12 @@
 {
   "owner": "giodamelio",
   "repo": "oh-my-pi",
-  "rev": "3556fde8d4009c41b6e7e796d4e62e924dbf3b78",
-  "version": "3556fde",
-  "srcHash": "sha256-jICnm/JjzdxfppNhAry60dOAj6e/lZZnJbgsOevrRDY=",
-  "cargoHash": "sha256-4xk+Lm0TOxgMYTNNeohpGAftaeOBgJ8N4XSM9L/0CP4=",
+  "rev": "13d05dd5b9c91fb6c7c04d3f79a4f3d7dc45b016",
+  "version": "13d05dd",
+  "srcHash": "sha256-H3FCmv/gy7RNXqqx76aQzAc0W2Vjg0X5Jwdw2mrCflk=",
+  "cargoHash": "sha256-ruVNPdwVouXANqiPtpf+eznFEbT9ib5DRhEfnRoOJZU=",
   "nodeModulesHashes": {
-    "x86_64-linux": "sha256-K7h3FbgqHY4yV8MfnCe8kJcooYaCSuOaFeV+zlvTSZU=",
+    "x86_64-linux": "sha256-mFy34K4K2izF8+IJ2CF5yT3Qm2Um0j88VL/011Ao+Ck=",
     "aarch64-linux": "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
     "x86_64-darwin": "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
     "aarch64-darwin": "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
