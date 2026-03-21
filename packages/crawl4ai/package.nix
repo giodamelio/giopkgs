@@ -6,7 +6,7 @@
 }:
 python3.pkgs.buildPythonPackage rec {
   pname = "crawl4ai";
-  version = "0.8.5";
+  version = "docker-rebuild-v0.8.5";
   pyproject = true;
 
   src = fetchFromGitHub {
