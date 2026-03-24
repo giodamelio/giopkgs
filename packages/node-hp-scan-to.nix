@@ -8,13 +8,13 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "node-hp-scan-to";
-  version = "1.9.7";
+  version = "1.10.0";
 
   src = fetchFromGitHub {
     owner = "manuc66";
     repo = "node-hp-scan-to";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-+9cB/hLw426uKzJd6n0aWLtAHhri+DYWqeuZt88QwRo=";
+    hash = "sha256-WAei1bPkwxszc6/oi+u0JXGFV7bBd5ZYDWvUagWAhBg=";
   };
 
   missingHashes = ./node-hp-scan-to-missing-hashes.json;
