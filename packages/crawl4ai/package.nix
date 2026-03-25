@@ -6,14 +6,14 @@
 }:
 python3.pkgs.buildPythonPackage rec {
   pname = "crawl4ai";
-  version = "0.8.5";
+  version = "0.8.6";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "unclecode";
     repo = "crawl4ai";
     rev = "v${version}";
-    hash = "sha256-y5Nve8e41+wcTlymL6bXxPCwmN8+8/YvHYLGO3x4M+Q=";
+    hash = "sha256-cE5eF5nw9K6coYDE+xm2JKicmoMiAs1Jf7sQfsuAWcA=";
   };
 
   build-system = with python3.pkgs; [
