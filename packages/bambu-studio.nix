@@ -2,7 +2,7 @@
 pkgs.appimageTools.wrapType2 rec {
   name = "BambuStudio";
   pname = "bambu-studio";
-  version = "02.05.01.52";
+  version = "02.05.02.51";
   ubuntu_version = "24.04_PR-9540";
 
   src = pkgs.fetchurl {
