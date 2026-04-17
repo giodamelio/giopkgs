@@ -1,0 +1,308 @@
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  fetchPypi,
+  node-gyp,
+  nodejs,
+  gettext,
+  python3,
+  giflib,
+  ghostscript_headless,
+  imagemagickBig,
+  jbig2enc,
+  optipng,
+  pngquant,
+  qpdf,
+  tesseract5,
+  fetchPnpmDeps,
+  pnpmConfigHook,
+  pnpm,
+  poppler-utils,
+  xcbuild,
+  pango,
+  pkg-config,
+  symlinkJoin,
+  nltk-data,
+  lndir,
+}: let
+  version = "2.20.14-unstable-2026-04-16";
+
+  src = fetchFromGitHub {
+    owner = "paperless-ngx";
+    repo = "paperless-ngx";
+    rev = "bf6915114bb7c37ec33c8c2affa5feb1e27daef3";
+    hash = "sha256-zbfPI18X/SXz1UnfyuOmnm8KE+0b76jpeXkyb9P4PRs=";
+  };
+
+  python = python3.override {
+    self = python;
+    packageOverrides = _final: prev: {
+      django = prev.django_5;
+
+      fido2 = prev.fido2.overridePythonAttrs {
+        version = "1.2.0";
+
+        src = fetchPypi {
+          pname = "fido2";
+          version = "1.2.0";
+          hash = "sha256-45+VkgEi1kKD/aXlWB2VogbnBPpChGv6RmL4aqDTMzs=";
+        };
+
+        pytestFlags = [];
+      };
+
+      # tesseract5 may be overwritten in the paperless module and we need to propagate that to make the closure reduction effective
+      ocrmypdf = prev.ocrmypdf.override {tesseract = tesseract5;};
+    };
+  };
+
+  path = lib.makeBinPath [
+    ghostscript_headless
+    (imagemagickBig.override {ghostscript = ghostscript_headless;})
+    jbig2enc
+    optipng
+    pngquant
+    qpdf
+    tesseract5
+    poppler-utils
+  ];
+
+  frontend = stdenv.mkDerivation (finalAttrs: {
+    pname = "paperless-ngx-frontend";
+    inherit version;
+
+    src = src + "/src-ui";
+
+    pnpmDeps = fetchPnpmDeps {
+      inherit pnpm;
+      inherit (finalAttrs) pname version src;
+      fetcherVersion = 2;
+      hash = "sha256-J22obGCmG6nTiSDFo1+feX38cqETk1lrARaJ9BXGAB4="; # pnpmDeps
+    };
+
+    nativeBuildInputs =
+      [
+        node-gyp
+        nodejs
+        pkg-config
+        pnpmConfigHook
+        pnpm
+        python3
+      ]
+      ++ lib.optionals stdenv.hostPlatform.isDarwin [
+        xcbuild
+      ];
+
+    buildInputs =
+      [
+        pango
+      ]
+      ++ lib.optionals stdenv.hostPlatform.isDarwin [
+        giflib
+      ];
+
+    CYPRESS_INSTALL_BINARY = "0";
+    NG_CLI_ANALYTICS = "false";
+
+    buildPhase = ''
+      runHook preBuild
+
+      pushd node_modules/canvas
+      node-gyp rebuild
+      popd
+
+      # cat forcefully disables angular cli's spinner which doesn't work with nix' tty which is 0x0
+      pnpm run build --configuration production | cat
+
+      runHook postBuild
+    '';
+
+    doCheck = false;
+
+    installPhase = ''
+      runHook preInstall
+
+      mkdir -p $out/lib/paperless-ui
+      mv ../src/documents/static/frontend $out/lib/paperless-ui/
+
+      runHook postInstall
+    '';
+  });
+
+  nltkDataDir = symlinkJoin {
+    name = "paperless_ngx_nltk_data";
+    paths = with nltk-data; [
+      punkt-tab
+      snowball-data
+      stopwords
+    ];
+  };
+in
+  python.pkgs.buildPythonApplication rec {
+    pname = "paperless-ngx";
+    pyproject = true;
+
+    inherit version src;
+
+    postPatch = ''
+      # pytest-xdist with to many threads makes the tests flaky
+      if (( $NIX_BUILD_CORES > 3)); then
+        NIX_BUILD_CORES=3
+      fi
+      substituteInPlace pyproject.toml \
+        --replace-fail '"--numprocesses=auto",' "" \
+        --replace-fail '--maxprocesses=16' "--numprocesses=$NIX_BUILD_CORES"
+    '';
+
+    build-system = [python.pkgs.setuptools];
+
+    nativeBuildInputs = [
+      gettext
+      lndir
+    ];
+
+    pythonRelaxDeps = true;
+
+    pythonRemoveDeps = [
+      # Not available in nixpkgs
+      "django-rich"
+      "faiss-cpu"
+      "llama-index-vector-stores-faiss"
+      # Optional DB backends (handled via optional-dependencies)
+      "mysqlclient"
+      "psycopg"
+      "psycopg-c"
+      "psycopg-pool"
+    ];
+
+    dependencies = with python.pkgs;
+      [
+        azure-ai-documentintelligence
+        babel
+        bleach
+        channels
+        channels-redis
+        concurrent-log-handler
+        dateparser
+        django
+        django-allauth
+        django-auditlog
+        django-cachalot
+        django-celery-results
+        django-compression-middleware
+        django-cors-headers
+        django-extensions
+        django-filter
+        django-guardian
+        django-multiselectfield
+        django-soft-delete
+        django-treenode
+        djangorestframework
+        djangorestframework-guardian
+        drf-spectacular
+        drf-spectacular-sidecar
+        drf-writable-nested
+        filelock
+        flower
+        gotenberg-client
+        granian
+        httpx-oauth
+        ijson
+        imap-tools
+        inotifyrecursive
+        jinja2
+        langdetect
+        llama-index-core
+        llama-index-embeddings-huggingface
+        llama-index-embeddings-openai
+        llama-index-llms-ollama
+        llama-index-llms-openai
+        nltk
+        ocrmypdf
+        openai
+        pathvalidate
+        pdf2image
+        python-dateutil
+        python-dotenv
+        python-gnupg
+        python-ipware
+        python-magic
+        rapidfuzz
+        redis
+        regex
+        scikit-learn
+        sentence-transformers
+        setproctitle
+        tantivy
+        tika-client
+        torch
+        watchfiles
+        whitenoise
+        zxing-cpp
+      ]
+      ++ django-allauth.optional-dependencies.mfa
+      ++ django-allauth.optional-dependencies.socialaccount
+      ++ redis.optional-dependencies.hiredis;
+
+    # Dummy secret key only used at build time for collectstatic/compilemessages
+    PAPERLESS_SECRET_KEY = "build-time-dummy-key";
+
+    postBuild = ''
+      # Compile manually because `pythonRecompileBytecodeHook` only works
+      # for files in `python.sitePackages`
+      ${python.pythonOnBuildForHost.interpreter} -OO -m compileall src
+
+      # Collect static files
+      ${python.pythonOnBuildForHost.interpreter} src/manage.py collectstatic --clear --no-input
+
+      # Compile string translations using gettext
+      ${python.pythonOnBuildForHost.interpreter} src/manage.py compilemessages
+    '';
+
+    installPhase = let
+      pythonPath = python.pkgs.makePythonPath dependencies;
+    in ''
+      runHook preInstall
+
+      mkdir -p $out/lib/paperless-ngx/static/frontend
+      cp -r {src,static,LICENSE} $out/lib/paperless-ngx
+      lndir -silent ${frontend}/lib/paperless-ui/frontend $out/lib/paperless-ngx/static/frontend
+      chmod +x $out/lib/paperless-ngx/src/manage.py
+      makeWrapper $out/lib/paperless-ngx/src/manage.py $out/bin/paperless-ngx \
+        --prefix PYTHONPATH : "${pythonPath}" \
+        --prefix PATH : "${path}"
+      makeWrapper ${lib.getExe python.pkgs.celery} $out/bin/celery \
+        --prefix PYTHONPATH : "${pythonPath}:$out/lib/paperless-ngx/src" \
+        --prefix PATH : "${path}"
+
+      runHook postInstall
+    '';
+
+    postFixup = ''
+      # Remove tests with samples (~14M)
+      find $out/lib/paperless-ngx -type d -name tests -exec rm -rv {} +
+    '';
+
+    doCheck = false;
+
+    passthru = {
+      inherit
+        frontend
+        nltkDataDir
+        path
+        python
+        tesseract5
+        ;
+      updateScript = ./update.sh;
+    };
+
+    meta = {
+      description = "Tool to scan, index, and archive all of your physical documents";
+      homepage = "https://docs.paperless-ngx.com/";
+      license = lib.licenses.gpl3Only;
+      platforms = lib.platforms.unix;
+      mainProgram = "paperless-ngx";
+      maintainers = [];
+    };
+  }
