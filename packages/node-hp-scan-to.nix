@@ -21,7 +21,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   offlineCache = yarn-berry.fetchYarnBerryDeps {
     inherit (finalAttrs) src missingHashes;
-    hash = "sha256-GPdd40tYYViGXSFsZQ73yxy4JgUKqLFWMv0N2blFKEo=";
+    hash = "sha256-aR3xV2LDp6oeccgcFMMdxGM/Ki+EP7ce2hAFN75WI90=";
   };
 
   nativeBuildInputs = [
