@@ -13,10 +13,10 @@ old_version=$(nix eval --raw ".#$package.version" 2>/dev/null || echo "unknown")
 # Check if package has a custom update script
 if script_path=$(nix eval --raw ".#$package.updateScript" 2>/dev/null); then
   echo "Running custom update script for $package..."
-  "$script_path" || echo "Update failed for $package"
+  "$script_path"
 else
   echo "Using default nix-update for $package..."
-  nix-update --flake "$package" || echo "No update available or update failed for $package"
+  nix-update --flake "$package"
 fi
 
 # Get new version after update
