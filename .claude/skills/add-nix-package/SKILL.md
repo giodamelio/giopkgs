@@ -60,7 +60,7 @@ This outputs a `fetchFromGitHub` expression with the correct hash. Extract the h
 
 For Go packages, you'll need `vendorHash`. Set it to `lib.fakeHash` initially, attempt a build, then extract the correct hash from the error message.
 
-For Rust packages using `cargoHash`, same approach — use `lib.fakeHash`, build, extract the real hash.
+For Rust packages, prefer `cargoHash` over `cargoLock.lockFile`. `cargoHash` is simpler (no vendored lock file to maintain) and `nix-update` can update it automatically. Use `lib.fakeHash` initially, build, extract the real hash. Only fall back to `cargoLock.lockFile` if `cargoHash` doesn't work (e.g., git dependencies in Cargo.lock that need `outputHashes`).
 
 ### Template reference
 
@@ -193,7 +193,7 @@ Common issues and fixes:
 - **Hash mismatch**: Extract the correct hash from the error output (the `got: sha256-...` line) and update the derivation
 - **Missing dependencies**: Read the build error, add the required `buildInputs` or `nativeBuildInputs`
 - **Rust workspace**: If the repo is a workspace, use `buildAndTestSubdir` to select the right crate, or apply patches
-- **Cargo.lock not found**: Copy `Cargo.lock` into the package directory and reference it with `cargoLock.lockFile = ./Cargo.lock;` instead of `cargoHash`
+- **Cargo.lock not found**: Copy `Cargo.lock` into the package directory and reference it with `cargoLock.lockFile = ./Cargo.lock;` instead of `cargoHash`. This is a last resort — `cargoHash` is preferred since `nix-update` handles it automatically and there's no vendored file to maintain
 - **Go vendor issues**: Some Go projects need `proxyVendor = true`
 - **Test failures**: If tests need network/external services, set `doCheck = false`
 
@@ -220,7 +220,7 @@ You need a custom script if:
 - The version format is non-standard (e.g., includes git short hash, date-based)
 - The package has multiple hashes that need coordinated updates (e.g., `hashes.json`)
 - The tag format doesn't follow `v${version}` and `nix-update` can't figure it out
-- Post-update processing is needed (e.g., updating a Cargo.lock)
+- Post-update processing is needed (e.g., updating a vendored lock file)
 
 For custom scripts, add `passthru.updateScript = ./update.sh;` and create the script. Keep it simple — use `nix-update` as the base and add post-processing only if needed:
 
