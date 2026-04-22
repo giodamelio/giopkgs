@@ -65,6 +65,7 @@
           nurl # Fetch a URL and give a Nix style fetch statement with the correct hash
           nix-update # Easily Auto Update version/src hashs for derivations
           crate2nix # Help building Rust packages (adding this to handle building a single crate from a workspace)
+          self.packages.${pkgs.system}.remind-me-to # Reminder checker
           prek # Git Hooks
           alejandra # Nix formatting
           shellcheck # Shell script linting

@@ -36,3 +36,11 @@ name = "Lint shell scripts"
 language = "system"
 entry = "shellcheck"
 files = '\.sh$'
+
+[[repos.hooks]]
+id = "remind-me-to"
+name = "Check reminders"
+language = "system"
+entry = "remind-me-to"
+pass_filenames = false
+
