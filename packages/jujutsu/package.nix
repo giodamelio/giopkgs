@@ -6,13 +6,13 @@
   src = fetchFromGitHub {
     owner = "jj-vcs";
     repo = "jj";
-    rev = "670f746f2894c1fd06634b6124a32c39046003b4";
-    hash = "sha256-DICYloF6Jd5COXjL/W32zsQrDUPCtPDIUdGMZ7sdqF4=";
+    rev = "dd3536ccdbfa98c32c90b1bc587ad7a135cb2681";
+    hash = "sha256-j7h/LQ08foV23NBf1OzjZDeVokQoh/OqD2lecUIypBo=";
   };
 in
   # REMIND-ME-TO: Remove this override pr_released=github:jj-vcs/jj#9279
   pkgs.jujutsu.overrideAttrs {
-    version = "0.40.0-unstable-2026-04-21";
+    version = "0.40.0-unstable-2026-04-23";
 
     inherit src;
 
@@ -23,6 +23,8 @@ in
 
     # Version check fails because the binary reports a different version than our override
     doInstallCheck = false;
+
+    passthru.updateScript = ./update.sh;
 
     meta.description = "Git-compatible DVCS (latest main branch)";
   }

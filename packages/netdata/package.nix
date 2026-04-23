@@ -12,6 +12,7 @@ in
     passthru =
       (old.passthru or {})
       // {
+        updateScript = ./../../scripts/skip-update.sh;
         tests = {
           # Upstream test disabled - fails with 404 on curl http://127.0.0.1:19999
           # even with unpatched netdata. Likely a flaky/broken upstream test.

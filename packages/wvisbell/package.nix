@@ -10,13 +10,13 @@
 }:
 stdenv.mkDerivation {
   pname = "wvisbell";
-  version = "0-unstable-2026-03-22";
+  version = "0-unstable-2026-03-23";
 
   src = fetchFromGitHub {
     owner = "giodamelio";
     repo = "wvisbell";
-    rev = "2d07199badf68b4261b34045b106d2256eafca81";
-    hash = "sha256-HAbUUTyWlNlUBQ1wP/7f++DmYlhJOPDBRhE5RjoPcc0=";
+    rev = "3b5878d824c3a726403bae022e1a63d66dfdde93";
+    hash = "sha256-wrXDrlcXcnCOvl19BoTIbVYvxPLE78TRLUsPAgIJGzQ=";
   };
 
   nativeBuildInputs = [

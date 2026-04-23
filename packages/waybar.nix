@@ -10,6 +10,12 @@ pkgs.waybar.overrideAttrs (oldAttrs: {
       })
     ];
 
+  passthru =
+    (oldAttrs.passthru or {})
+    // {
+      updateScript = ./../scripts/skip-update.sh;
+    };
+
   meta =
     oldAttrs.meta
     // {

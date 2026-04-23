@@ -26,13 +26,13 @@
   nltk-data,
   lndir,
 }: let
-  version = "2.20.14-unstable-2026-04-14";
+  version = "2.20.14-unstable-2026-04-23";
 
   src = fetchFromGitHub {
     owner = "paperless-ngx";
     repo = "paperless-ngx";
-    rev = "1692c916f8f5a3578ee53e5f8f162e4163e534aa";
-    hash = "sha256-aEfvbp5kNcHE3G3YHT1n9B6UgLqWbK9khCCHSauB0uo=";
+    rev = "22d3b208c9aad249dd11c4b624eb96a4ef11125a";
+    hash = "sha256-OGHhIRyoGnxNxLnC2trVN4u59b/75qBfHmcJybu04yk=";
   };
 
   python = python3.override {
@@ -78,7 +78,7 @@
       inherit pnpm;
       inherit (finalAttrs) pname version src;
       fetcherVersion = 2;
-      hash = "sha256-J22obGCmG6nTiSDFo1+feX38cqETk1lrARaJ9BXGAB4="; # pnpmDeps
+      hash = "sha256-pG7olcBq5P52CvZYLqUjb+RwxjbQbSotlS50pvgm7WQ="; # pnpmDeps
     };
 
     nativeBuildInputs =

@@ -21,6 +21,8 @@ buildGoModule rec {
     "-w"
   ];
 
+  passthru.updateScript = ./update.sh;
+
   meta = {
     description = "Minimal graph-based issue tracker for long-horizon AI agent tasks";
     homepage = "https://github.com/h2oai/tk";
