@@ -4,8 +4,6 @@
   fetchFromGitHub,
   pkg-config,
   cmake,
-  llvmPackages,
-  bun,
   alsa-lib,
   libpulseaudio,
   tesseract,
@@ -26,7 +24,7 @@
   onnxruntime,
   makeWrapper,
 }:
-rustPlatform.buildRustPackage rec {
+rustPlatform.buildRustPackage {
   pname = "screenpipe";
   version = "0.3.289-unstable-2025-07-18";
 
@@ -56,8 +54,6 @@ rustPlatform.buildRustPackage rec {
   nativeBuildInputs = [
     pkg-config
     cmake
-    llvmPackages.libclang
-    bun
     makeWrapper
     rustPlatform.bindgenHook
   ];

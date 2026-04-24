@@ -5,7 +5,6 @@
   fetchFromGitHub,
   pkg-config,
   cmake,
-  llvmPackages,
   bun,
   alsa-lib,
   libpulseaudio,
@@ -74,7 +73,7 @@
     outputHash = "sha256-27D4e7/ZfC3jZXwIgpkqQG4nCjPDWh8StqKgcc21sI8=";
   };
 in
-  rustPlatform.buildRustPackage rec {
+  rustPlatform.buildRustPackage {
     pname = "screenpipe-app";
     inherit version src;
 
@@ -126,8 +125,6 @@ in
     nativeBuildInputs = [
       pkg-config
       cmake
-      llvmPackages.libclang
-      bun
       makeWrapper
       rustPlatform.bindgenHook
     ];
