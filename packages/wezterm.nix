@@ -13,6 +13,13 @@ pkgs.wezterm.overrideAttrs (oldAttrs: {
         url = "https://patch-diff.githubusercontent.com/raw/wezterm/wezterm/pull/7510.patch";
         hash = "sha256-iIwkg1Tf/tcZQlCqsPeu32uu6fKV0ye9JaKlU6skF00=";
       })
+
+      # Fix Wayland clipboard not working between multiple windows (#6685)
+      # REMIND-ME-TO: Remove this patch pr_released=github:wezterm/wezterm#7034
+      (fetchpatch {
+        url = "https://patch-diff.githubusercontent.com/raw/wezterm/wezterm/pull/7034.patch";
+        hash = "sha256-wEpl9ODe6evUQCem7BgoavENl+iQtRKHVtmIS5UelNI=";
+      })
     ];
 
   passthru =
@@ -24,6 +31,6 @@ pkgs.wezterm.overrideAttrs (oldAttrs: {
   meta =
     oldAttrs.meta
     // {
-      description = "Wezterm with PR #7510";
+      description = "Wezterm with PR #7510 and PR #7034";
     };
 })
