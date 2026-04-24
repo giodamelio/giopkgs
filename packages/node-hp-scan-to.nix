@@ -24,12 +24,43 @@ stdenv.mkDerivation (finalAttrs: {
     hash = "sha256-aR3xV2LDp6oeccgcFMMdxGM/Ki+EP7ce2hAFN75WI90=";
   };
 
+  # Skip the default yarnBerryConfigHook because yarn 4.14 rejects
+  # upstream's lockfile metadata version 8 (it expects 9).
+  # We replicate the hook manually with a patched lockfile.
+  dontYarnBerryInstallDeps = true;
+
   nativeBuildInputs = [
     makeWrapper
     nodejs
     yarn-berry
     yarn-berry.yarnBerryConfigHook
   ];
+
+  configurePhase = ''
+    runHook preConfigure
+
+    export HOME=$(mktemp -d)
+
+    # Bump lockfile metadata version for yarn 4.14 compatibility
+    sed -i 's/^  version: 8$/  version: 9/' yarn.lock
+
+    yarn config set enableTelemetry false
+    yarn config set enableGlobalCache false
+    yarn config set enableScripts true
+
+    rm -rf ./.yarn/cache
+    mkdir -p ./.yarn
+    cp -r --reflink=auto $offlineCache/cache ./.yarn/cache
+    chmod u+w -R ./.yarn/cache
+
+    export npm_config_nodedir="${nodejs}/include/node"
+
+    YARN_IGNORE_PATH=1 yarn install --mode=skip-build --inline-builds
+    patchShebangs node_modules
+    YARN_IGNORE_PATH=1 yarn install --inline-builds
+
+    runHook postConfigure
+  '';
 
   installPhase = ''
     runHook preInstall
