@@ -178,6 +178,10 @@ in
     doCheck = false;
 
     postInstall = ''
+      # Install Tauri resources (tray icons, etc.) next to the binary
+      # Tauri resolves resources relative to the executable's directory
+      cp -r $src/apps/screenpipe-app-tauri/src-tauri/assets $out/bin/assets
+
       wrapProgram $out/bin/screenpipe-app \
         --prefix PATH : ${lib.makeBinPath [tesseract ffmpeg]} \
         --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [
