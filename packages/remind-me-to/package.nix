@@ -5,7 +5,7 @@
 }:
 rustPlatform.buildRustPackage rec {
   pname = "remind-me-to";
-  version = "0.1.1-unstable-2026-04-22";
+  version = "0.2.0";
 
   src = fetchFromGitHub {
     owner = "giodamelio";
