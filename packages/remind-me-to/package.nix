@@ -5,16 +5,16 @@
 }:
 rustPlatform.buildRustPackage rec {
   pname = "remind-me-to";
-  version = "0.2.0";
+  version = "0.2.0-unstable-2026-04-25";
 
   src = fetchFromGitHub {
     owner = "giodamelio";
     repo = "remind-me-to";
-    rev = "5fb3a5cb89a927c207a6bb416136d76504f93d96";
-    hash = "sha256-YMHxViHchFdKhdIMvNnN2Mh7wneOo+TizbtXCYskUI0=";
+    rev = "be4c84727dc4d8fe9f68dea3c83f1d7559b38cd7";
+    hash = "sha256-cs85Dy8PJQrXnlqMY60FI9YSsYd2uWZj1UNahULIx3k=";
   };
 
-  cargoHash = "sha256-OgN6c3ujLwHVA9wqg7GeBS4xkJqzehLw1MUlefFhfI0=";
+  cargoHash = "sha256-pNbN5IVixE4myo70a19a1k1V5q3kCBO7pAfYw0jytmg=";
 
   doCheck = false;
 
