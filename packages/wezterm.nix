@@ -17,7 +17,7 @@ pkgs.wezterm.overrideAttrs (oldAttrs: {
       # Fix Wayland clipboard not working between multiple windows (#6685)
       # REMIND-ME-TO: Remove this patch pr_released=github:wezterm/wezterm#7034
       (fetchpatch {
-        url = "https://patch-diff.githubusercontent.com/raw/wezterm/wezterm/pull/7034.patch";
+        url = "https://github.com/wezterm/wezterm/commit/3f062e0aa1924dc5666a57b0e7d065cc26a3b29b.patch";
         hash = "sha256-wEpl9ODe6evUQCem7BgoavENl+iQtRKHVtmIS5UelNI=";
       })
     ];
