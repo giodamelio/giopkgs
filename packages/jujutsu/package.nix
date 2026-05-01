@@ -6,8 +6,8 @@
   src = fetchFromGitHub {
     owner = "jj-vcs";
     repo = "jj";
-    rev = "0aa2f870b466c812058560d4d1ef8a37b3472486";
-    hash = "sha256-BhoeOtBSr303nD1IgIS2Df2Se4jDGq3ocT+kgU3qC+k=";
+    rev = "f5225927bed437497ebb197de57651e5d5b7969a";
+    hash = "sha256-m1Sgl7rkZszItk7QB1Wkf8Tz+RcyT9GNbHqtwREnF+c=";
   };
 in
   # REMIND-ME-TO: Remove this override pr_released=github:jj-vcs/jj#9279
@@ -18,7 +18,7 @@ in
 
     cargoDeps = pkgs.rustPlatform.fetchCargoVendor {
       inherit src;
-      hash = "sha256-hRD8SBCgPsjHqi98PafB8dkFvPGPAgn8hPx6nnZfUWw=";
+      hash = "sha256-TJLSLpSM0nu3lOcYv9+zpRgLaOp9wOH3KxjkMns51z4=";
     };
 
     # Version check fails because the binary reports a different version than our override
