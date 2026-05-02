@@ -89,7 +89,7 @@
 in
   stdenv.mkDerivation (finalAttrs: {
     pname = "emdash";
-    version = "1.1.6-unstable-2025-04-29";
+    version = "0-unstable-2026-05-02";
 
     src = fetchFromGitHub {
       owner = "giodamelio";
