@@ -10,13 +10,13 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "mcporter";
-  version = "0.9.0";
+  version = "0.10.0";
 
   src = fetchFromGitHub {
     owner = "steipete";
     repo = "mcporter";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-IH0jYDkmEPPvy/g5+YfkNBwG2QUMwkuVCnSeSTsNHNw=";
+    hash = "sha256-klN/bPqz2AsCXPa+JkPTbeNJmC6DyyS96goYt/YhsTY=";
   };
 
   nativeBuildInputs = [
@@ -30,7 +30,7 @@ stdenv.mkDerivation (finalAttrs: {
     inherit (finalAttrs) pname version src;
     pnpm = pnpm_10;
     fetcherVersion = 3;
-    hash = "sha256-aYBd1+QkME+q2LkZRnlxHEbIQz38k+N64YSS+NOu0QU=";
+    hash = "sha256-jqHEu86dNjJuYBVKDeDlre+KlFEqx55YXZ5K81AK+uY=";
   };
 
   buildPhase = ''

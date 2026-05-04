@@ -6,8 +6,8 @@
   src = fetchFromGitHub {
     owner = "jj-vcs";
     repo = "jj";
-    rev = "7ade7fcb75693d894ca422c69f9b111af274382a";
-    hash = "sha256-rbXItWY7nClDvpkAcX+G8l6X8ayJ9d6WCKxSeVDW8KI=";
+    rev = "402ffd890c86baaac85d33b0ea2259eb9dded1e0";
+    hash = "sha256-DCo70A/RNIdj6pEUbX5IPX4y+xQpGhgfWoTaVpa0EXA=";
   };
 in
   # REMIND-ME-TO: Remove this override pr_released=github:jj-vcs/jj#9279
