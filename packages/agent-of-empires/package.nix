@@ -8,7 +8,7 @@
 }:
 rustPlatform.buildRustPackage rec {
   pname = "agent-of-empires";
-  version = "1.6.1";
+  version = "1.4.4";
 
   src = fetchFromGitHub {
     owner = "njbrake";
