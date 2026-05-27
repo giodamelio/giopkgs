@@ -6,19 +6,19 @@
   src = fetchFromGitHub {
     owner = "jj-vcs";
     repo = "jj";
-    rev = "d3e889b0c70a887580dca4028af9a29b5576ffe7";
-    hash = "sha256-NqYqajBbUZBu+OjxqnwWntnzWLYPUhUaithpOUjAdus=";
+    rev = "f849d257b9020a3af6e97bc04c1ad0a592d94ccc";
+    hash = "sha256-JtRBh0I1UetjEU9QJxaFe5oDYw8X9fETxX1fPZac3Ik=";
   };
 in
   # REMIND-ME-TO: Remove this override pr_released=github:jj-vcs/jj#9279
   pkgs.jujutsu.overrideAttrs {
-    version = "0-unstable-2026-05-24";
+    version = "0-unstable-2026-05-26";
 
     inherit src;
 
     cargoDeps = pkgs.rustPlatform.fetchCargoVendor {
       inherit src;
-      hash = "sha256-6mHb/q6hFNsW6eDUaqLExYvCxf2A6nTQkflYUZLPMq0=";
+      hash = "sha256-HRmn+sRcC5MJcxscapWR/8maVD2EwnGatEcXXS68lLs=";
     };
 
     # Version check fails because the binary reports a different version than our override
