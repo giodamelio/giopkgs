@@ -26,7 +26,7 @@
 }:
 rustPlatform.buildRustPackage {
   pname = "screenpipe";
-  version = "0.3.289-unstable-2025-07-18";
+  version = "mcp-v0.18.9";
 
   src = fetchFromGitHub {
     owner = "screenpipe";

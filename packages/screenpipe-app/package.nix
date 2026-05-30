@@ -36,7 +36,7 @@
   # Node/frontend build
   cacert,
 }: let
-  version = "0.3.289-unstable-2025-07-18";
+  version = "mcp-v0.18.9";
   rev = "ce8374893f1931a83cf1d3dccc4ead634a763074";
 
   src = fetchFromGitHub {
