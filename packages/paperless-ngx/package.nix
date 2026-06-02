@@ -26,7 +26,7 @@
   nltk-data,
   lndir,
 }: let
-  version = "0-unstable-2026-05-26";
+  version = "3.0.0-beta.rc1-unstable-2026-05-26";
 
   src = fetchFromGitHub {
     owner = "paperless-ngx";

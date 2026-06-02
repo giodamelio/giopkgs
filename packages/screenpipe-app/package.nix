@@ -36,7 +36,7 @@
   # Node/frontend build
   cacert,
 }: let
-  version = "mcp-v0.18.9";
+  version = "app-v2.4.306";
   rev = "ce8374893f1931a83cf1d3dccc4ead634a763074";
 
   src = fetchFromGitHub {
