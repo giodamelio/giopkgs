@@ -6,13 +6,13 @@
   src = fetchFromGitHub {
     owner = "jj-vcs";
     repo = "jj";
-    rev = "aafd1c865db87c72e32f0148205f17f30e898141";
-    hash = "sha256-Q9DSgoxg2xJ78GoubrIFIMS/3H8ZpOjXZ+ZSYDbdnnY=";
+    rev = "a8ef9b52859458e912c7b08abad6e3f37dc8687a";
+    hash = "sha256-aF+HYkvXnyEIqPlFnJm/m3mPXN2YVupcse3BujuowEs=";
   };
 in
   # REMIND-ME-TO: Remove this override pr_released=github:jj-vcs/jj#9279
   pkgs.jujutsu.overrideAttrs {
-    version = "0.41.0-unstable-2026-06-03";
+    version = "0.41.0-unstable-2026-06-04";
 
     inherit src;
 
