@@ -1,0 +1,14 @@
+{
+  "version": "150.0.2-beta.25",
+  "tag": "v150.0.2-beta.25",
+  "assets": {
+    "x86_64-linux": {
+      "url": "https://github.com/daijro/camoufox/releases/download/v150.0.2-beta.25/camoufox-150.0.2-alpha.26-lin.x86_64.zip",
+      "hash": "sha256-F/J3HNsGAmlpl4FUdT6vFJwQA0djWEdDjI8heho0zcc="
+    },
+    "aarch64-linux": {
+      "url": "https://github.com/daijro/camoufox/releases/download/v150.0.2-beta.25/camoufox-150.0.2-alpha.25-lin.arm64.zip",
+      "hash": "sha256-1RklLSkT8iux5I2OsuUP/7KOU5IH4y3bT5Eev0CXnEU="
+    }
+  }
+}
