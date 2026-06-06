@@ -105,7 +105,7 @@ dependencies = [
 
 [[package]]
 name = "agent-of-empires"
-version = "1.10.0"
+version = "1.10.1"
 dependencies = [
  "aes-gcm",
  "agent-client-protocol",
@@ -113,6 +113,7 @@ dependencies = [
  "agent-of-empires",
  "ansi-to-tui",
  "anyhow",
+ "aoe-settings-derive",
  "argon2",
  "axum",
  "base64",
@@ -266,6 +267,15 @@ name = "anyhow"
 version = "1.0.102"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
+
+[[package]]
+name = "aoe-settings-derive"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.117",
+]
 
 [[package]]
 name = "argon2"
@@ -4311,9 +4321,9 @@ dependencies = [
 
 [[package]]
 name = "toml_edit"
-version = "0.25.11+spec-1.1.0"
+version = "0.25.12+spec-1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0b59c4d22ed448339746c59b905d24568fcbb3ab65a500494f7b8c3e97739f2b"
+checksum = "d2153edc6955a6c354fad8f5efd38b6a8769bdccf9fe50f8e1329f81b0baa5d7"
 dependencies = [
  "indexmap 2.14.0",
  "toml_datetime",
@@ -5314,6 +5324,7 @@ dependencies = [
  "clap-markdown",
  "ctrlc",
  "nix 0.31.3",
+ "notify",
  "regex",
 ]
 

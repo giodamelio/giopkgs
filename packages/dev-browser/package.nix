@@ -9,13 +9,13 @@
   stdenv,
   makeWrapper,
 }: let
-  version = "0.2.7";
+  version = "1.0.0";
 
   src = fetchFromGitHub {
     owner = "SawyerHood";
     repo = "dev-browser";
     tag = "v${version}";
-    hash = "sha256-tc8+AJM4qpu+t3N61xr/rfjoYS9udyi4SG4evhnfxc8=";
+    hash = "sha256-PRd6e5RN4wQ43qdNtPCtAIZ5RZOHn6UD8aYxJOfe7RA=";
   };
 
   daemon = stdenv.mkDerivation {
