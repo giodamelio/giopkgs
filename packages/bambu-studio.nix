@@ -2,7 +2,7 @@
 pkgs.appimageTools.wrapType2 rec {
   name = "BambuStudio";
   pname = "bambu-studio";
-  version = "02.07.01.57";
+  version = "02.07.01.62";
   ubuntu_version = "24.04";
   build_timestamp = "20260601192128";
 
