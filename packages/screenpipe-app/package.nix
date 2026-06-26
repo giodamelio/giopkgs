@@ -36,7 +36,7 @@
   # Node/frontend build
   cacert,
 }: let
-  version = "app-v2.5.66";
+  version = "app-v2.5.73";
   rev = "ce8374893f1931a83cf1d3dccc4ead634a763074";
 
   src = fetchFromGitHub {
