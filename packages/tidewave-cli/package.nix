@@ -12,7 +12,7 @@
     src = fetchFromGitHub {
       owner = "tidewave-ai";
       repo = "tidewave_app";
-      rev = "v0.4.4";
+      rev = "v0.4.5";
       hash = "sha256-5e9x4mrfZ16hbT9teQUIlyZet+P56HSn+805qeUzdms=";
     };
     patches = [
@@ -24,7 +24,7 @@
 in
   rustPlatform.buildRustPackage rec {
     pname = "tidewave-cli";
-    version = "0.4.4";
+    version = "0.4.5";
 
     inherit src;
 
