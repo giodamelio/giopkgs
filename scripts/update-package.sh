@@ -17,6 +17,8 @@ update_failed=false
 # Check if package has a custom update script
 if script_path=$(nix eval --raw ".#$package.updateScript" 2>/dev/null); then
   echo "Running custom update script for $package..."
+  # Expose the attr name to the script (standard nixpkgs updateScript convention).
+  export UPDATE_NIX_ATTR_PATH="$package"
   if ! "$script_path"; then
     update_failed=true
   fi

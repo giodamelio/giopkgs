@@ -5,16 +5,20 @@
 }:
 rustPlatform.buildRustPackage rec {
   pname = "rayfish";
-  version = "0.1.5";
+  # Tracks the tip of the upstream default branch rather than a tagged release.
+  # nix-update (branch mode) bumps rev/version/hash automatically.
+  version = "2026-07-06-87e2019";
 
   src = fetchFromGitHub {
     owner = "rayfish";
     repo = "rayfish";
-    tag = "v${version}";
-    hash = "sha256-Sn8sYTi3oBUX+FvIBjpIgQ5QUwNO3pWXeG06RNkhySw=";
+    rev = "87e2019dc5c209871f945313f4371561add6fba4";
+    hash = "sha256-6pVDsHN66RYG5wXdLYGCsHzsVDEY+JU4pXOY6+0VCIo=";
   };
 
-  cargoHash = "sha256-JcFaWYhgf8LzoriHmMwEYerQ1leAeog4+uuRQ4Uwunc=";
+  cargoHash = "sha256-JYsFvzpdn41Zfe4UsEqPWZ3xp1/JKGe1ewtTOD6aKT0=";
+
+  passthru.updateScript = ./../scripts/update-branch.sh;
 
   meta = {
     description = "P2P mesh VPN powered by iroh — connect peers by cryptographic identity, not IP address";
