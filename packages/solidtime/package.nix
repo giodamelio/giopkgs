@@ -8,13 +8,13 @@
 }:
 php83.buildComposerProject2 (finalAttrs: {
   pname = "solidtime";
-  version = "0.15.1";
+  version = "0.16.0";
 
   src = fetchFromGitHub {
     owner = "solidtime-io";
     repo = "solidtime";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-xfI647a/C/JdH88LDk3E8uIYdgRZl+nxSSwggyFI0Fg=";
+    hash = "sha256-KLkCfjZ44shUKhbmFTdk+KYcss1xrc8U5X5cJPbfJ4k=";
   };
 
   php = php83.buildEnv {
@@ -37,12 +37,12 @@ php83.buildComposerProject2 (finalAttrs: {
       ]);
   };
 
-  vendorHash = "sha256-v4kQNEuduJKbnkDv2a1cwYcmLmJGRii+J2F3jlAwX18=";
+  vendorHash = "sha256-H2Kc/vplocbrEnfIAiUf0Nf2gEvcK3R/f7mhrBm6kUE=";
   composerNoPlugins = false;
 
   npmDeps = fetchNpmDeps {
     inherit (finalAttrs) src;
-    hash = "sha256-qSr5kl+5QXLwZRccGPTfMqj7zjtzuzJKPqYj5Wr1RD0=";
+    hash = "sha256-kAbHhIlgA7njuWYaFA90jcSB89GmUSD3BK4om79aylM=";
   };
 
   nativeBuildInputs = [

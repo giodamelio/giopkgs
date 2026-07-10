@@ -12,8 +12,8 @@ rustPlatform.buildRustPackage rec {
   src = fetchFromGitHub {
     owner = "rayfish";
     repo = "rayfish";
-    rev = "5ec651b7b71fda3569e337ca37af7ebc9cf95617";
-    hash = "sha256-vmGG4adu1bHrABO9pfT847hbTiVFAakZSfTwwfa7oYE=";
+    rev = "89bd1ca6802672c1acaa2629f937036cb9c83e5d";
+    hash = "sha256-uGa1b/pSsguCcOIsTgp3Wryeux2Z+3VVFIjLV9LLYBg=";
   };
 
   cargoHash = "sha256-dm6gzxhbchgiF+HYb7yYDRINjmsNWu78blNzeCpy3lQ=";
