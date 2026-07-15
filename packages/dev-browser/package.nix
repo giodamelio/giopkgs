@@ -9,13 +9,13 @@
   stdenv,
   makeWrapper,
 }: let
-  version = "1.0.0";
+  version = "0.2.9";
 
   src = fetchFromGitHub {
     owner = "SawyerHood";
     repo = "dev-browser";
     tag = "v${version}";
-    hash = "sha256-PRd6e5RN4wQ43qdNtPCtAIZ5RZOHn6UD8aYxJOfe7RA=";
+    hash = "sha256-zqPTArkhlPok5nYSu7QvXGBVPIb1hK6pzqvH/nnWX9E=";
   };
 
   daemon = stdenv.mkDerivation {
@@ -61,7 +61,7 @@ in
 
     cargoRoot = "cli";
     buildAndTestSubdir = "cli";
-    cargoHash = "sha256-pZGH5qRX9ylELvpL8MPxTL0cyaWWyH4gAsuroKYa9VE=";
+    cargoHash = "sha256-eCkDXk+6o4257FiPJF9nQK4zLARwqAqPL1CaPgMT9/c=";
 
     nativeBuildInputs = [makeWrapper];
 
