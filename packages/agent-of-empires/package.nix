@@ -8,13 +8,13 @@
 }:
 rustPlatform.buildRustPackage rec {
   pname = "agent-of-empires";
-  version = "1.12.1";
+  version = "1.13.0";
 
   src = fetchFromGitHub {
     owner = "njbrake";
     repo = "agent-of-empires";
     rev = "v${version}";
-    hash = "sha256-UD3LALLbQ+EkvPD5BpXL5VvmHwrT52QRdwBJK6uQOeQ=";
+    hash = "sha256-tbf+DKWUHJ3M8SXD7ezT1HDmJTL8NpWObBqkSMHGv8U=";
   };
 
   cargoLock.lockFile = ./Cargo.lock;
