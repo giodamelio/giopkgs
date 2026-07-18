@@ -26,7 +26,7 @@
   nltk-data,
   lndir,
 }: let
-  version = "3.0.0-beta.rc1-unstable-2026-07-10";
+  version = "3.0.0-beta.rc2-unstable-2026-07-10";
 
   src = fetchFromGitHub {
     owner = "paperless-ngx";
@@ -78,7 +78,7 @@
       inherit pnpm;
       inherit (finalAttrs) pname version src;
       fetcherVersion = 3;
-      hash = "sha256-wUsdmLjY6Pb/LKQZZn1fPS2oRl7v3VVQKZlXP7TtkCE="; # pnpmDeps
+      hash = ""; # pnpmDeps
     };
 
     nativeBuildInputs =
