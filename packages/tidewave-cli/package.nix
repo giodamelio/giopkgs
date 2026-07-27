@@ -17,9 +17,14 @@
     };
     patches = [
       ./remove-src-tauri-from-workspace.patch
-      ./remove-tao-patch.patch
       ./remove-tao-patch-cargolock.patch
     ];
+    # [patch.crates-io] is the last section of Cargo.toml. Stripping it by
+    # section rather than by patch keeps this working across version bumps,
+    # which a context patch does not (the workspace version sits in its context).
+    postPatch = ''
+      sed -i '/^\[patch\.crates-io\]/,$d' Cargo.toml
+    '';
   };
 in
   rustPlatform.buildRustPackage rec {
@@ -28,7 +33,7 @@ in
 
     inherit src;
 
-    cargoHash = "sha256-UAlNOox6KE8r8O20nqVypiilT9FJDG42BIEn87q8i10=";
+    cargoHash = "sha256-g+r5dLgw8LRwpRuh0dtFi1l5ECXVhwQLa6bB+JRuESo=";
 
     # Build only the CLI crate from the workspace
     buildAndTestSubdir = "tidewave-cli";

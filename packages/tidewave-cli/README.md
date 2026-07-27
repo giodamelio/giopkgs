@@ -4,11 +4,11 @@ This package builds only the `tidewave-cli` command-line tool from the [tidewave
 
 ## Patches Applied
 
-This package applies three patches to the upstream source:
+This package applies two patches plus one `postPatch` edit to the upstream source:
 
 1. **remove-src-tauri-from-workspace.patch** - Removes the `src-tauri` crate from the Cargo workspace to avoid building GUI dependencies
-2. **remove-tao-patch.patch** - Removes the `[patch.crates-io]` section from `Cargo.toml` that overrides `tao` with a git dependency
-3. **remove-tao-patch-cargolock.patch** - Removes the git-based `tao` and `tao-macros` entries from `Cargo.lock`
+2. **remove-tao-patch-cargolock.patch** - Removes the git-based `tao` and `tao-macros` entries from `Cargo.lock`
+3. **`postPatch` sed** - Strips the `[patch.crates-io]` section from `Cargo.toml`. This was a patch file, but its context included the workspace `version` line, so it failed to apply on every version bump. Deleting the section by name is version-independent; it works because `[patch.crates-io]` is the last section in that file.
 
 ## Why These Patches Are Needed
 
@@ -78,9 +78,11 @@ When updating this package to a new version:
    nix-prefetch-url --unpack https://github.com/tidewave-ai/tidewave_app/archive/refs/tags/vX.Y.Z.tar.gz
 
    # Apply manual edits and generate new patches
-   diff -u original/Cargo.toml modified/Cargo.toml > remove-tao-patch.patch
    diff -u original/Cargo.lock modified/Cargo.lock > remove-tao-patch-cargolock.patch
    ```
+
+   Prefer a `postPatch` edit over a patch file when the surrounding context
+   contains the version number — a context patch there breaks on every bump.
 
 ## Related Issues
 
