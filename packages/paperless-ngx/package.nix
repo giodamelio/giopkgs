@@ -26,13 +26,13 @@
   nltk-data,
   lndir,
 }: let
-  version = "3.0.2-unstable-2026-07-24";
+  version = "3.0.3-unstable-2026-07-26";
 
   src = fetchFromGitHub {
     owner = "paperless-ngx";
     repo = "paperless-ngx";
-    rev = "ed714b8a5ad796fec793b74e06c99524629330c7";
-    hash = "sha256-+aPaIqm1GzYqmvAsm8aMeNDKIm3yE3VjzVlcSHBxK84=";
+    rev = "65fe6aacc7b4cfb54b5a6714a90a02179ab88d1a";
+    hash = "sha256-yHzbi5FvDUJ4/4MOgJKEe7OZe7CWkygGbVoXTW2ymJk=";
   };
 
   python = python3.override {
