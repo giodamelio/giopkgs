@@ -70,7 +70,7 @@
 
     outputHashMode = "recursive";
     outputHashAlgo = "sha256";
-    outputHash = "sha256-27D4e7/ZfC3jZXwIgpkqQG4nCjPDWh8StqKgcc21sI8=";
+    outputHash = "sha256-h7K8m08MNfd5NXBHvdtbcKFDXks2ZHzxymVYFbg4688=";
   };
 in
   rustPlatform.buildRustPackage {
