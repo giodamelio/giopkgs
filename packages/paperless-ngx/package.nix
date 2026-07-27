@@ -17,7 +17,7 @@
   tesseract5,
   fetchPnpmDeps,
   pnpmConfigHook,
-  pnpm,
+  pnpm_10,
   poppler-utils,
   xcbuild,
   pango,
@@ -26,6 +26,9 @@
   nltk-data,
   lndir,
 }: let
+  # fetcherVersion 3 is rejected for pnpm >= 11; upstream nixpkgs pins pnpm_10 too.
+  pnpm = pnpm_10;
+
   version = "3.0.4-unstable-2026-07-28";
 
   src = fetchFromGitHub {
@@ -78,7 +81,7 @@
       inherit pnpm;
       inherit (finalAttrs) pname version src;
       fetcherVersion = 3;
-      hash = ""; # pnpmDeps
+      hash = "sha256-QfTLlgwt4WFdXCOQhjs0jQXdKjYFZkxyXxKAzgq2NZY="; # pnpmDeps
     };
 
     nativeBuildInputs =
@@ -108,9 +111,12 @@
     buildPhase = ''
       runHook preBuild
 
-      pushd node_modules/canvas
-      node-gyp rebuild
-      popd
+      # canvas is an optional transitive dep; absent since the 3.x frontend
+      if [ -d node_modules/canvas ]; then
+        pushd node_modules/canvas
+        node-gyp rebuild
+        popd
+      fi
 
       # cat forcefully disables angular cli's spinner which doesn't work with nix' tty which is 0x0
       pnpm run build --configuration production | cat
@@ -215,9 +221,12 @@ in
         langdetect
         llama-index-core
         llama-index-embeddings-huggingface
+        llama-index-embeddings-ollama
         llama-index-embeddings-openai
+        llama-index-embeddings-openai-like
         llama-index-llms-ollama
         llama-index-llms-openai
+        llama-index-llms-openai-like
         nltk
         ocrmypdf
         openai
@@ -234,6 +243,7 @@ in
         scikit-learn
         sentence-transformers
         setproctitle
+        sqlite-vec
         tantivy
         tika-client
         torch
