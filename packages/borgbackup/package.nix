@@ -13,7 +13,21 @@
   installShellFiles,
   versionCheckHook,
 }: let
-  python = python3;
+  # borg 2.0.0b21 hard-fails at runtime on msgpack > 1.1.2 (guard in
+  # borg/helpers/msgpack.py), so pin it instead of relaxing the constraint.
+  python = python3.override {
+    packageOverrides = _final: prev: {
+      msgpack = prev.msgpack.overridePythonAttrs (_old: rec {
+        version = "1.1.2";
+        src = fetchFromGitHub {
+          owner = "msgpack";
+          repo = "msgpack-python";
+          tag = "v${version}";
+          hash = "sha256-9iFTQPAM6AAogcRUoCw5/bECNiGUwmAarEiwMJ+rqbk=";
+        };
+      });
+    };
+  };
 
   borghash = python.pkgs.buildPythonPackage rec {
     pname = "borghash";
