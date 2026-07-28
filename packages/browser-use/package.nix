@@ -182,7 +182,7 @@
 in
   python.pkgs.buildPythonApplication rec {
     pname = "browser-use";
-    version = "0.13.6";
+    version = "0.13.7";
     pyproject = true;
 
     src = fetchFromGitHub {
