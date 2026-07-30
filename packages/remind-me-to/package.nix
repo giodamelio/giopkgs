@@ -18,7 +18,7 @@ rustPlatform.buildRustPackage rec {
 
   doCheck = false;
 
-  passthru.updateScript = ./update.sh;
+  passthru.updateScript = ./../../scripts/update-branch.sh;
 
   meta = {
     description = "A command-line reminder tool";
