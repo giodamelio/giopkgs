@@ -78,6 +78,12 @@
 
           # Upstream's coverage gate fails at 97.90%; overrideAttrs can't reach doCheck.
           (nix-manipulator.packages.${pkgs.system}.default.overridePythonAttrs {doCheck = false;}) # nima
+
+          nushell
+          jq
+          gh
+          curl
+          python3 # borgbackup/sync-deps.py
         ];
         shellHook = ''
           prek install
