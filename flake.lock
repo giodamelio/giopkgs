@@ -1,40 +1,6 @@
 {
   "nodes": {
-    "nix-manipulator": {
-      "inputs": {
-        "nixpkgs": "nixpkgs"
-      },
-      "locked": {
-        "lastModified": 1784363548,
-        "narHash": "sha256-8E+P1okR7PsTI9gx6zIsGyxWDw/le9SIowq26cEsS1s=",
-        "owner": "hoh",
-        "repo": "nix-manipulator",
-        "rev": "6f99687860f6f6cbff327b02f997741cc3e33db8",
-        "type": "github"
-      },
-      "original": {
-        "owner": "hoh",
-        "repo": "nix-manipulator",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
-      "locked": {
-        "lastModified": 1769584980,
-        "narHash": "sha256-5ZR+lN7X3EVCADFFPKsPPkqDj3+L7eLu5wxTIdk6c4Y=",
-        "owner": "hoh",
-        "repo": "nixpkgs",
-        "rev": "e91e354e9e2dc9ca71f4e02db98af20bdd1e035e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "hoh",
-        "repo": "nixpkgs",
-        "rev": "e91e354e9e2dc9ca71f4e02db98af20bdd1e035e",
-        "type": "github"
-      }
-    },
-    "nixpkgs_2": {
       "locked": {
         "lastModified": 1784796856,
         "narHash": "sha256-wWFrV5/Qbm+lyt5x20E/bSbfJiGKMo4RCxZV8cl/WZI=",
@@ -52,8 +18,7 @@
     },
     "root": {
       "inputs": {
-        "nix-manipulator": "nix-manipulator",
-        "nixpkgs": "nixpkgs_2"
+        "nixpkgs": "nixpkgs"
       }
     }
   },
