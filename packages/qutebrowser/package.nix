@@ -9,6 +9,12 @@ pkgs.qutebrowser.overrideAttrs (oldAttrs: {
     hash = "sha256-NRq6klZPPBDN2LvYLEsdbjkD8PjoSRToaarNATWzBrg=";
   };
 
+  passthru =
+    (oldAttrs.passthru or {})
+    // {
+      updateScript = ./../../scripts/skip-update.sh;
+    };
+
   meta =
     oldAttrs.meta
     // {
