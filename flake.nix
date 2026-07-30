@@ -3,11 +3,15 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+
+    # Can't follow our nixpkgs: its python-tree-sitter-nix is broken.
+    nix-manipulator.url = "github:hoh/nix-manipulator";
   };
 
   outputs = {
     self,
     nixpkgs,
+    nix-manipulator,
   }: let
     forAllSystems = function:
       nixpkgs.lib.genAttrs [
@@ -71,6 +75,9 @@
           shellcheck # Shell script linting
           statix # Nix linting
           deadnix # Find dead Nix code
+
+          # Upstream's coverage gate fails at 97.90%; overrideAttrs can't reach doCheck.
+          (nix-manipulator.packages.${pkgs.system}.default.overridePythonAttrs {doCheck = false;}) # nima
         ];
         shellHook = ''
           prek install
