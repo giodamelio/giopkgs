@@ -148,18 +148,22 @@ export def run-nix-update [...args: string] {
 
 # --- flow ------------------------------------------------------------------
 
-# Restore `file` if `body` fails. Only needed where something outside our
-# control mutates it first (nix-update), or where a verification build runs
+# Restore `files` if `body` fails. Only needed where something outside our
+# control mutates them first (nix-update), or where a verification build runs
 # after the write — a pure compute-then-write-once script needs no rollback.
-export def with-rollback [file: path, body: closure] {
-  let backup = (open --raw $file)
+#
+# Pass every file the body writes, not just package.nix. Inker's regenerated
+# lockfiles were once left behind by a rollback that covered package.nix alone,
+# and CI committed a 0.6.0 lockfile beside a 0.4.0 package.nix.
+export def with-rollback [files: list<path>, body: closure] {
+  let backups = ($files | each {|f| {file: $f, content: (open --raw $f)}})
   try {
     do $body
   } catch {|e|
-    $backup | save -f $file
+    $backups | each {|b| $b.content | save -f $b.file} | ignore
     # Re-raise the original rather than wrapping it: nushell reports a wrapped
     # closure failure as "Eval block failed", which hides the actual cause.
-    print -e $"!! rolled back ($file | path basename)"
+    print -e $"!! rolled back ($files | each {|f| $f | path basename} | str join ', ')"
     error make $e.raw
   }
 }

@@ -62,21 +62,36 @@ def main [package: string] {
   if ($result.stderr | is-not-empty) { print -e $result.stderr }
 
   let new = (nix-eval-or $"($package).version" "unknown")
+  let status = if $result.exit_code != 0 {
+    "failed"
+  } else if $old == $new {
+    "unchanged"
+  } else {
+    "updated"
+  }
 
   summary $"### ($package)"
-  if $result.exit_code != 0 {
-    # The old bash version reported only "check the job logs", which is why the
-    # /nix/store path bug went unnoticed for so long. Put the reason in the
-    # summary, and leave a marker for the terminal job to find.
-    let tail = ($result.stderr | lines | last 20 | str join (char nl))
-    summary $"**Update failed** \(current version: `($old)`)"
-    summary $"```(char nl)($tail)(char nl)```"
-    mkdir update-failures
-    $"($package) exited ($result.exit_code)(char nl)($tail)(char nl)" | save -f $"update-failures/($package).log"
-    print -e $"($package): update failed"
-  } else if $old == $new {
-    summary $"No update available \(current version: `($old)`)"
-  } else {
-    summary $"Updated: `($old)` → `($new)`"
+  match $status {
+    "failed" => {
+      # The old bash version reported only "check the job logs", which is why the
+      # /nix/store path bug went unnoticed for so long. Put the reason in the
+      # summary, and leave a marker for the terminal job to find.
+      let tail = ($result.stderr | lines | last 20 | str join (char nl))
+      summary $"**Update failed** \(current version: `($old)`)"
+      summary $"```(char nl)($tail)(char nl)```"
+      mkdir update-failures
+      $"($package) exited ($result.exit_code)(char nl)($tail)(char nl)" | save -f $"update-failures/($package).log"
+      print -e $"($package): update failed"
+    }
+    "unchanged" => { summary $"No update available \(current version: `($old)`)" }
+    "updated" => { summary $"Updated: `($old)` → `($new)`" }
   }
+
+  # commit-updates.nu turns this into one commit per package. A failed update can
+  # still leave regenerated files on disk — inker's lockfiles outlived a rollback
+  # that only restored package.nix — so the status has to travel with the diff.
+  mkdir update-meta
+  {package: $package, old: $old, new: $new, status: $status}
+  | to json
+  | save -f $"update-meta/($package).json"
 }

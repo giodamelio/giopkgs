@@ -108,10 +108,14 @@ def main [] {
   }
 
   # The lockfiles are inputs to the hashes just computed, so they and package.nix
-  # have to land together or the package is left inconsistent.
-  with-rollback $file {
-    cp $frontend_lock ($file | path dirname | path join "frontend-package-lock.json")
-    cp $backend_lock ($file | path dirname | path join "backend-package-lock.json")
+  # have to land together or the package is left inconsistent — all three are
+  # rolled back together when the verification build fails.
+  let frontend_dest = (pkg-dir | path join "frontend-package-lock.json")
+  let backend_dest = (pkg-dir | path join "backend-package-lock.json")
+
+  with-rollback [$file $frontend_dest $backend_dest] {
+    cp $frontend_lock $frontend_dest
+    cp $backend_lock $backend_dest
     $updated | save -f $file
     nix-build (attr)
   }

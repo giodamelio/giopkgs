@@ -12,7 +12,7 @@ def main [] {
   let before = (open --raw $file)
 
   # nix-update writes the file before we get a say, so this one needs rollback.
-  with-rollback $file {
+  with-rollback [$file] {
     run-nix-update "--version=branch=main"
 
     if (open --raw $file) == $before {

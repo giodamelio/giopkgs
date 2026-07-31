@@ -18,7 +18,7 @@ def main [] {
   let file = (pkg-file)
   let before = (open --raw $file)
 
-  with-rollback $file {
+  with-rollback [$file] {
     run-nix-update "--no-src" "--lockfile-metadata-path" (attr)
 
     if (open --raw $file) == $before {

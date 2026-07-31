@@ -66,6 +66,16 @@ The nightly workflow runs `scripts/update-package.nu` per package in a matrix, u
 as an artifact, commits them to a temp branch, runs `nix flake check`, and only then pushes to
 main. `flake.lock` updates weekly on Sundays, an hour ahead of the nightly run.
 
+`scripts/commit-updates.nu` does the committing, one commit per package —
+`chore(<name>): <old> -> <new>`, or `chore(<name>): refresh dependencies` when only hashes moved.
+The version pair travels from the matrix job in `update-meta/<name>.json`, which also carries the
+pass/fail status: a package whose update failed has its changed files discarded rather than
+committed, because a failed run can still leave regenerated files on disk. A package that changed
+without metadata is a hard error, not a skip.
+
+Only the branch tip is verified, so `git bisect` through auto-update history can land on a commit
+that does not evaluate.
+
 Dispatch is by convention, in order:
 
 1. `packages/<name>/update.nu` — run from the checkout, for packages where several hashes move
@@ -132,7 +142,9 @@ def main [] {
 ```
 
 `with-rollback` is only for the cases that genuinely need it: `nix-update` writing the file before
-the script has a say, or a verification build after the write.
+the script has a say, or a verification build after the write. It takes a **list** of every file
+the body writes, not just `package.nix` — inker regenerates two lockfiles, and when only
+`package.nix` was rolled back CI committed a 0.6.0 lockfile beside a 0.4.0 `package.nix`.
 
 ### Recovering a dependency hash
 

@@ -92,6 +92,17 @@ jobs:
           path: update-failures/
           if-no-files-found: ignore
 
+      # Carries the version pair and the pass/fail status to the commit loop.
+      # Written unconditionally, so a missing file is a bug rather than an
+      # expected empty case.
+      - name: Upload update metadata
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: update-meta-${{ matrix.package }}
+          path: update-meta/
+          if-no-files-found: error
+
   prepare-for-build:
     name: Prepare changes for build
     needs: [update-packages]
@@ -103,6 +114,20 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Setup Magic Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
+        with:
+          use-flakehub: false
+
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v14
+        with:
+          name: giopkgs
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
       - name: Download all package updates
         uses: actions/download-artifact@v4
         with:
@@ -110,27 +135,30 @@ jobs:
           path: packages/
           merge-multiple: true
 
-      - name: Check for changes
-        id: check-changes
-        run: |
-          git add packages/ || true
+      - name: Download update metadata
+        uses: actions/download-artifact@v4
+        with:
+          pattern: update-meta-*
+          path: update-meta/
+          merge-multiple: true
 
-          if git diff --staged --quiet; then
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-            echo "No changes detected"
-          else
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-            echo "Changes detected"
-          fi
-
-      - name: Commit to temp branch
-        if: steps.check-changes.outputs.has_changes == 'true'
+      - name: Configure Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout -b auto-update-${{ github.run_id }}
-          git commit -m "chore: update packages"
-          git push origin auto-update-${{ github.run_id }}
+
+      # Created before the commit loop runs so the script stays branch-agnostic
+      # and can be exercised locally. Never pushed when nothing was committed.
+      - name: Create temp branch
+        run: git checkout -b auto-update-${{ github.run_id }}
+
+      - name: Commit each update
+        id: check-changes
+        run: nix develop .#update --command nu scripts/commit-updates.nu
+
+      - name: Push temp branch
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: git push origin auto-update-${{ github.run_id }}
 
   verify-and-push:
     name: Verify and push to main

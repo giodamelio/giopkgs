@@ -46,7 +46,7 @@ def resolve-compatible [constraint: string, tags: list<string>]: nothing -> any 
 def main [] {
   let file = (pkg-file)
 
-  with-rollback $file {
+  with-rollback [$file] {
     run-nix-update $"--version-regex=($VERSION_REGEX)"
 
     # borg itself is a finalAttrs-style attrset; the two deps below are `rec`.

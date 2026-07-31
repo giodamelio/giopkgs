@@ -78,7 +78,7 @@ package.nix interpolates the version into that URL, so this needs a manual fix."
     return
   }
 
-  with-rollback $file {
+  with-rollback [$file] {
     $updated | save -f $file
     nix-build (attr)
   }
