@@ -52,6 +52,13 @@ export def site-rule [site: record, fix?: string]: nothing -> string {
   let under = ($site | get -o under | default [])
   let ident = ($site | get -o ident | default {})
 
+  # `under: [FOO]` in a list literal is the *string* "FOO"; referring to another
+  # const needs `[$FOO]`. Catch that here rather than deep in rule construction.
+  let bad = ($under | where {|e| ($e | describe) !~ '^record'})
+  if ($bad | is-not-empty) {
+    error make {msg: $"site 'under' entries must be records, got ($bad | to nuon) — did you mean [$($bad | first)]?"}
+  }
+
   mut rule = ((binding-pattern $"($site.attr) = $V;") | merge (nest $under $ident))
   mut doc = {id: "giopkgs", language: "nix", rule: $rule}
   if $fix != null { $doc = ($doc | insert fix $fix) }
