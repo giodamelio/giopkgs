@@ -59,7 +59,14 @@ export def site-rule [site: record, fix?: string]: nothing -> string {
     error make {msg: $"site 'under' entries must be records, got ($bad | to nuon) — did you mean [$($bad | first)]?"}
   }
 
-  mut rule = ((binding-pattern $"($site.attr) = $V;") | merge (nest $under $ident))
+  # Every site we edit holds a string literal, so requiring one rules out
+  # same-named bindings that hold an identifier — inker has both a
+  # `version = "0.4.0"` and a `version = prismaEnginesCommit`.
+  mut rule = (
+    (binding-pattern $"($site.attr) = $V;")
+    | insert has {kind: "string_expression"}
+    | merge (nest $under $ident)
+  )
   mut doc = {id: "giopkgs", language: "nix", rule: $rule}
   if $fix != null { $doc = ($doc | insert fix $fix) }
   $doc | to yaml

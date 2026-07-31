@@ -74,7 +74,7 @@ package.nix interpolates the version into that URL, so this needs a manual fix."
 
   if (dry-run) {
     info "dry run, not writing"
-    print $updated
+    print -n $updated
     return
   }
 
