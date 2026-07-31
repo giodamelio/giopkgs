@@ -13,8 +13,10 @@
   installShellFiles,
   versionCheckHook,
 }: let
-  # borg 2.0.0b21 hard-fails at runtime on msgpack > 1.1.2 (guard in
+  # borg hard-fails at runtime on msgpack outside its supported range (guard in
   # borg/helpers/msgpack.py), so pin it instead of relaxing the constraint.
+  # 2.0.0b22 raised its own ceiling to 1.2.1, so this pin may be droppable once
+  # nixpkgs' msgpack lands inside that range.
   python = python3.override {
     packageOverrides = _final: prev: {
       msgpack = prev.msgpack.overridePythonAttrs (_old: rec {
@@ -62,14 +64,14 @@
 
   borgstore = python.pkgs.buildPythonPackage rec {
     pname = "borgstore";
-    version = "0.4.1";
+    version = "0.5.5";
     pyproject = true;
 
     src = fetchFromGitHub {
       owner = "borgbackup";
       repo = "borgstore";
       tag = version;
-      hash = "sha256-zQdo/bJD3KI7/qgMLfcaWY+PP4vbBE/hlGS+y+3DFzI=";
+      hash = "sha256-tgH0jw5flLmPl7hAStGZ+mCWaOm6P4sbBDObVcHCwTQ=";
     };
 
     env.SETUPTOOLS_SCM_PRETEND_VERSION = version;
@@ -96,17 +98,26 @@
 in
   python.pkgs.buildPythonApplication (finalAttrs: {
     pname = "borgbackup";
-    version = "2.0.0b21";
+    version = "2.0.0b22";
     pyproject = true;
 
     src = fetchFromGitHub {
       owner = "borgbackup";
       repo = "borg";
       tag = finalAttrs.version;
-      hash = "sha256-u9hXzo4OyOf6iixQhm3NEzVDb+4irkaLHH2PjnmfmM8=";
+      hash = "sha256-d+ZhqTwfIQkkRszjcVqyw3j3ME5Yxh1W/+sHQJZ0S7o=";
     };
 
     env.SETUPTOOLS_SCM_PRETEND_VERSION = finalAttrs.version;
+
+    # 2.0.0b22 added `tag.strict = false` under [tool.setuptools_scm]. Every key
+    # in that table is splatted into Configuration(), and the vcs-versioning
+    # nixpkgs ships has no `tag` field, so the build dies with
+    # "unexpected keyword argument 'tag'". Dropping it is safe: the version comes
+    # from SETUPTOOLS_SCM_PRETEND_VERSION above, so tags are never parsed at all.
+    postPatch = ''
+      substituteInPlace pyproject.toml --replace-fail "tag.strict = false" ""
+    '';
 
     build-system = with python.pkgs; [
       cython
@@ -143,6 +154,7 @@ in
         shtab
         jsonargparse
         pyyaml
+        blake3 # new runtime dependency in 2.0.0b22
       ]
       ++ [python.pkgs.xxhash]
       ++ lib.optionals (pythonOlder "3.14") [

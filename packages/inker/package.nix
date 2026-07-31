@@ -12,18 +12,18 @@
   chromium,
 }: let
   pname = "inker";
-  version = "0.4.0";
+  version = "0.6.0";
 
   src = fetchFromGitHub {
     owner = "usetrmnl";
     repo = "inker";
     tag = version;
-    hash = "sha256-dQoNf3dMdVxcmDYxWOmoyOKDTXFMarxLLh452Vy/ITo=";
+    hash = "sha256-neUphh1r+FtQkYvHOmbFc8+cjLL6FtuWdt2zMtzgRd4=";
   };
 
   # The upstream package-lock.json files are stale (the project's real lockfile
   # is bun.lock). We vendor freshly regenerated npm lockfiles next to this
-  # derivation and splice them into the source tree at build time. update.sh
+  # derivation and splice them into the source tree at build time. update.nu
   # regenerates them.
   lockDir = lock:
     runCommand "inker-lock" {} ''
@@ -36,7 +36,7 @@
   # normally fetches them cannot run in the sandbox, and nixpkgs' prisma-engines
   # is a different major version, so we pin the matching binaries by hand.
   # Commit comes from @prisma/engines-version in backend-package-lock.json.
-  prismaEnginesCommit = "605197351a3c8bdd595af2d2a9bc3025bca48ea2";
+  prismaEnginesCommit = "c2990dca591cba766e3b7ef5d9e8a84796e47ab7";
   prismaEngineUrl = engine: "https://binaries.prisma.sh/all_commits/${prismaEnginesCommit}/debian-openssl-3.0.x/${engine}.gz";
   prisma-engines = stdenv.mkDerivation {
     pname = "inker-prisma-engines";
@@ -49,15 +49,15 @@
 
     libquerySrc = fetchurl {
       url = prismaEngineUrl "libquery_engine.so.node";
-      hash = "sha256-ETwMIJMjMgZmjH6QGD7GVwYYlyx9mo2ydEeunFViCjQ=";
+      hash = "sha256-04CHLMihcxDG67JJ3AAPT8v7vVHdw2vrV7HtDFTG1hA=";
     };
     schemaSrc = fetchurl {
       url = prismaEngineUrl "schema-engine";
-      hash = "sha256-rzzzPHOpUM3GJvkhU08lQ7rNspdq3RKxMRRW9YZtvhU=";
+      hash = "sha256-bB39/jRThIewiP0hsxUhR+G9PJ0MALT8bsrkDOuoPYo=";
     };
     querySrc = fetchurl {
       url = prismaEngineUrl "query-engine";
-      hash = "sha256-Pl/YpYu326qqpbVfczM5RxB8iWXZlewG9vToqzSPIQo=";
+      hash = "sha256-6FEihyf0Ss6iMSHmHJmcm+NInb3xGabk1YR8Lv/DMrk=";
     };
 
     installPhase = ''
@@ -89,7 +89,7 @@
     npmDeps = fetchNpmDeps {
       name = "${pname}-frontend-npm-deps";
       src = lockDir ./frontend-package-lock.json;
-      hash = "sha256-XKLRMfP78dUcRK3jOL5XhyQBfEBbVjzPejdSt58hoX8=";
+      hash = "sha256-OR+duz+Z8xcgl7AyD7feg2lvnTXhlKn+qDNtm73Baow=";
     };
 
     npmFlags = ["--legacy-peer-deps"];
@@ -124,7 +124,7 @@
     npmDeps = fetchNpmDeps {
       name = "${pname}-backend-npm-deps";
       src = lockDir ./backend-package-lock.json;
-      hash = "sha256-XgK2+MQMVh5xocbxt3ennTHYAqjnekMiZivWgVGLrG0=";
+      hash = "sha256-Hu/7Yn1qHz/JFwj111ksIR/iQntonpyhyquvWyLbgS0=";
     };
 
     # --ignore-scripts skips the network-dependent postinstalls of prisma,
@@ -137,10 +137,15 @@
     inherit (prismaEnv) PRISMA_QUERY_ENGINE_LIBRARY PRISMA_QUERY_ENGINE_BINARY PRISMA_SCHEMA_ENGINE_BINARY PRISMA_CLI_QUERY_ENGINE_TYPE PRISMA_CLIENT_ENGINE_TYPE;
     PUPPETEER_SKIP_DOWNLOAD = "true";
 
+    # bullmq and @nestjs/bullmq are imported by the source but declared nowhere
+    # upstream, so nest build fails with TS2307. Declare them here to match the
+    # regenerated lockfile — npm ci rejects the two disagreeing. Versions are
+    # kept in sync with MISSING_DEPS in update.nu.
     postPatch = ''
       cp ${./backend-package-lock.json} package-lock.json
       substituteInPlace package.json \
-        --replace-fail "bun run nest build" "nest build"
+        --replace-fail "bun run nest build" "nest build" \
+        --replace-fail '"dependencies": {' '"dependencies": { "bullmq": "^5.34.0", "@nestjs/bullmq": "^10.2.3",'
     '';
 
     # Generate the Prisma client before webpack runs so the build can resolve it.

@@ -14,6 +14,16 @@ use ../../scripts/nix-edit.nu *
 const REPO = "usetrmnl/inker"
 const NPM_DEPS = {bind: "npmDeps", call: "fetchNpmDeps"}
 
+# Dependencies the source imports but never declares. Keep in sync with the
+# backend postPatch in package.nix — npm ci rejects a lockfile that disagrees
+# with package.json, so a mismatch fails loudly at build time.
+const MISSING_DEPS = {
+  backend: {
+    "bullmq": "^5.34.0"
+    "@nestjs/bullmq": "^10.2.3"
+  }
+}
+
 const VERSION = {attr: "version"}
 const SRC = {attr: "hash", under: [{bind: "src", call: "fetchFromGitHub"}]}
 const PRISMA_COMMIT = {attr: "prismaEnginesCommit"}
@@ -29,8 +39,21 @@ def engine-url [commit: string, engine: string]: nothing -> string {
 
 def regenerate-lockfile [tag: string, app: string]: nothing -> path {
   let work = (mktemp -d)
+  let manifest = ($work | path join "package.json")
   (http get --raw $"https://raw.githubusercontent.com/($REPO)/($tag)/($app)/package.json"
-    | save -f ($work | path join "package.json"))
+    | save -f $manifest)
+
+  # Since 0.6.0 the backend imports these but declares them nowhere — not in
+  # package.json, bun.lock or package-lock.json — so `nest build` cannot resolve
+  # them and TypeScript fails with TS2307. Declare them so the lockfile we
+  # generate contains them; package.nix patches the same pair into the source's
+  # package.json, or `npm ci` would reject the lockfile as out of sync.
+  let missing = ($MISSING_DEPS | get -o $app | default {})
+  if ($missing | is-not-empty) {
+    let pkg = (open $manifest)
+    $pkg | update dependencies ($pkg.dependencies | merge $missing) | save -f $manifest
+    info $"declared missing ($app) deps: ($missing | columns | str join ', ')"
+  }
 
   cd $work
   let out = (^npm install --package-lock-only --ignore-scripts --legacy-peer-deps | complete)
