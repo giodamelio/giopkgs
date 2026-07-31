@@ -169,8 +169,6 @@ in
     versionCheckProgramArg = "--version";
     doInstallCheck = true;
 
-    passthru.updateScript = ./update.sh;
-
     meta = {
       changelog = "https://github.com/borgbackup/borg/blob/${finalAttrs.src.rev}/docs/changes.rst";
       description = "Deduplicating archiver with compression and encryption (2.0 beta)";

@@ -33,12 +33,6 @@ in
 
     patches = (oldAttrs.patches or []) ++ [./env-file-secrets.patch];
 
-    passthru =
-      (oldAttrs.passthru or {})
-      // {
-        updateScript = ./update.sh;
-      };
-
     meta =
       oldAttrs.meta
       // {

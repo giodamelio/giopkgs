@@ -304,7 +304,6 @@ in
         python
         tesseract5
         ;
-      updateScript = ./update.sh;
     };
 
     meta = {

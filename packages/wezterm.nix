@@ -23,7 +23,7 @@ in
     passthru =
       (oldAttrs.passthru or {})
       // {
-        updateScript = ./../scripts/skip-update.sh;
+        updatePolicy = "skip";
       };
 
     meta =

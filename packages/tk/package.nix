@@ -21,7 +21,7 @@ buildGoModule rec {
     "-w"
   ];
 
-  passthru.updateScript = ./../../scripts/update-branch.sh;
+  passthru.updatePolicy = "branch";
 
   meta = {
     description = "Minimal graph-based issue tracker for long-horizon AI agent tasks";

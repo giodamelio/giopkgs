@@ -184,7 +184,6 @@
 
     passthru = {
       inherit frontend prisma-engines;
-      updateScript = ./update.sh;
     };
 
     meta = {

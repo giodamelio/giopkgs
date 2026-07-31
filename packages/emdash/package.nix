@@ -197,7 +197,7 @@ in
       runHook postInstall
     '';
 
-    passthru.updateScript = ./../../scripts/update-branch.sh;
+    passthru.updatePolicy = "branch";
 
     meta = {
       description = "Multi-agent orchestration desktop app";

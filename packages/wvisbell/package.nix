@@ -30,7 +30,7 @@ stdenv.mkDerivation {
     wlr-protocols
   ];
 
-  passthru.updateScript = ./../../scripts/update-branch.sh;
+  passthru.updatePolicy = "branch";
 
   installPhase = ''
     runHook preInstall

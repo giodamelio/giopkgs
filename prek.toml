@@ -38,6 +38,13 @@ entry = "shellcheck"
 files = '\.sh$'
 
 [[repos.hooks]]
+id = "nu-check"
+name = "Check nushell scripts"
+language = "system"
+entry = "nu --no-config-file scripts/nu-check.nu"
+files = '\.nu$'
+
+[[repos.hooks]]
 id = "remind-me-to"
 name = "Check reminders"
 language = "system"

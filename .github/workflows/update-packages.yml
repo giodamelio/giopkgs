@@ -34,7 +34,7 @@ jobs:
       - name: Get package list
         id: get-packages
         run: |
-          packages=$(./scripts/list-packages.sh)
+          packages=$(nix eval --json '.#packages.x86_64-linux' --apply 'builtins.attrNames')
           echo "packages=$packages" >> $GITHUB_OUTPUT
 
   update-packages:
@@ -62,16 +62,17 @@ jobs:
           name: giopkgs
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
-      - name: Install nix-update
-        run: nix profile install nixpkgs#nix-update
-
       - name: Configure Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Update ${{ matrix.package }}
-        run: ./scripts/update-package.sh "${{ matrix.package }}"
+        env:
+          # Without this, `gh api` runs unauthenticated at 60 requests/hour from
+          # an IP shared with every other Actions runner.
+          GH_TOKEN: ${{ github.token }}
+        run: nix develop .#update --command nu scripts/update-package.nu "${{ matrix.package }}"
 
       - name: Upload package updates
         uses: actions/upload-artifact@v4
@@ -82,6 +83,14 @@ jobs:
             packages/${{ matrix.package }}/
           if-no-files-found: ignore
           include-hidden-files: true
+
+      - name: Upload failure marker
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: update-failures-${{ matrix.package }}
+          path: update-failures/
+          if-no-files-found: ignore
 
   prepare-for-build:
     name: Prepare changes for build
@@ -159,3 +168,36 @@ jobs:
 
       - name: Delete temp branch
         run: git push origin --delete auto-update-${{ github.run_id }}
+
+  # update-package.nu deliberately never fails its own job, so one broken
+  # upstream cannot stop the other packages from being committed. This job
+  # exists so those failures are still visible: a package that silently stops
+  # updating went unnoticed for months before it was added.
+  report-update-failures:
+    name: Report update failures
+    needs: [update-packages]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download failure markers
+        uses: actions/download-artifact@v4
+        with:
+          pattern: update-failures-*
+          path: update-failures/
+          merge-multiple: true
+
+      - name: Fail if any package failed to update
+        run: |
+          shopt -s nullglob
+          logs=(update-failures/*.log)
+          if [ ${#logs[@]} -eq 0 ]; then
+            echo "All packages updated cleanly."
+            exit 0
+          fi
+          echo "### Packages that failed to update" >> "$GITHUB_STEP_SUMMARY"
+          for log in "${logs[@]}"; do
+            name=$(basename "$log" .log)
+            echo "- \`$name\`" >> "$GITHUB_STEP_SUMMARY"
+            echo "::group::$name"; cat "$log"; echo "::endgroup::"
+          done
+          exit 1

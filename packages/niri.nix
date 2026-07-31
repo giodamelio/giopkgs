@@ -26,5 +26,5 @@ in
       patchShebangs resources/niri-session
     '';
 
-    passthru.updateScript = ./../scripts/skip-update.sh;
+    passthru.updatePolicy = "skip";
   }

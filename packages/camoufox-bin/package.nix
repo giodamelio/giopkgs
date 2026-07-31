@@ -61,8 +61,6 @@ in
     dontConfigure = true;
     dontBuild = true;
 
-    passthru.updateScript = ./update.sh;
-
     installPhase = ''
       runHook preInstall
 

@@ -58,27 +58,37 @@
         directory = ./packages;
       };
 
-    devShells = forAllSystems (pkgs: {
-      default = pkgs.mkShell {
-        buildInputs = with pkgs; [
-          nix-init # Help scaffold new package automatically
-          nurl # Fetch a URL and give a Nix style fetch statement with the correct hash
-          nix-update # Easily Auto Update version/src hashs for derivations
-          crate2nix # Help building Rust packages (adding this to handle building a single crate from a workspace)
-          self.packages.${pkgs.system}.remind-me-to # Reminder checker
-          prek # Git Hooks
-          alejandra # Nix formatting
-          shellcheck # Shell script linting
-          statix # Nix linting
-          deadnix # Find dead Nix code
+    devShells = forAllSystems (pkgs: let
+      # Everything the update scripts shell out to. CI enters this shell rather
+      # than installing tools ad hoc, so local and nightly runs cannot drift.
+      updateTools = with pkgs; [
+        nushell
+        ast-grep # Structural search/rewrite of Nix files
+        nix-update # Auto update version/src hashes for derivations
+        nurl # Fetch a URL and print a Nix fetch statement with the correct hash
+        prefetch-npm-deps # npmDepsHash without a build
+        nodejs # inker regenerates npm lockfiles
+        jq
+        gh
+        curl
+        python3 # borgbackup/sync-deps.py
+      ];
+    in {
+      update = pkgs.mkShell {buildInputs = updateTools;};
 
-          nushell
-          ast-grep # Structural search/rewrite of Nix files, used by the update scripts
-          jq
-          gh
-          curl
-          python3 # borgbackup/sync-deps.py
-        ];
+      default = pkgs.mkShell {
+        buildInputs =
+          updateTools
+          ++ (with pkgs; [
+            nix-init # Help scaffold new package automatically
+            crate2nix # Help building Rust packages (adding this to handle building a single crate from a workspace)
+            self.packages.${pkgs.system}.remind-me-to # Reminder checker
+            prek # Git Hooks
+            alejandra # Nix formatting
+            shellcheck # Shell script linting
+            statix # Nix linting
+            deadnix # Find dead Nix code
+          ]);
         shellHook = ''
           prek install
         '';

@@ -18,7 +18,7 @@ rustPlatform.buildRustPackage rec {
 
   cargoHash = "sha256-I+1SVPjsiB6Cqw3TaHqVETWCDB+JFonoVdR/bexUcmE=";
 
-  passthru.updateScript = ./../scripts/update-branch.sh;
+  passthru.updatePolicy = "branch";
 
   meta = {
     description = "P2P mesh VPN powered by iroh — connect peers by cryptographic identity, not IP address";
