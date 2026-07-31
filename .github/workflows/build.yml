@@ -5,6 +5,16 @@ on:
     branches: [main]
   pull_request:
   workflow_call:
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: Which packages to build
+        type: choice
+        default: active
+        options:
+          - active
+          - all
+          - archived-only
 
 jobs:
   detect-changes:
@@ -39,7 +49,10 @@ jobs:
 
       - name: Detect changes
         id: detect-changes
-        run: nix develop .#update --command nu scripts/detect-changes.nu "${{ github.event_name }}" "${{ github.base_ref }}"
+        run: >-
+          nix develop .#update --command nu scripts/detect-changes.nu
+          "${{ github.event_name }}" "${{ github.base_ref }}"
+          "${{ inputs.scope || 'active' }}"
 
   build:
     name: Build ${{ matrix.package }}

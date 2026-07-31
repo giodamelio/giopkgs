@@ -84,6 +84,34 @@ Scripts are found on disk instead, and `$env.FILE_PWD` is the package directory.
 committing. Failures land in `update-failures/` and a terminal workflow job turns them into a red
 X.
 
+## Archived packages
+
+`archived.nix` maps a package name to why it was shelved. Archiving is purely a CI-cost decision —
+nothing leaves the flake:
+
+| | archived |
+|---|---|
+| `nix build .#<name>` | works, unchanged |
+| local `nix flake check` | still covers it — `checks` is deliberately left complete |
+| `nix flake check --no-build` (the prek hook) | still evaluates it, so it cannot rot into a syntax error |
+| CI build matrix, nightly updates, CI-built checks | skipped |
+
+The filtering lives in `scripts/archived.nu` and is consumed **only by scripts, never by
+`flake.nix`**. That is deliberate: filtering `checks` inside Nix would need `builtins.getEnv` and
+an `--impure` flag to opt back in locally. Keeping it out means the thorough run is simply the
+local default.
+
+CI runs `scripts/check.nu` rather than a bare `nix flake check`: it evaluates everything, then
+builds only the active checks. Build Packages also takes a manual `scope` input — `active`, `all`,
+or `archived-only` — so you can ask "do my shelved packages still build?" without rebuilding the
+other thirty.
+
+`validate` errors if `archived.nix` names a package that no longer exists, so a central list cannot
+silently drift after a rename.
+
+The trade-off worth remembering: archived packages stop being cached and will drift out of
+buildability, so reviving one may mean a repair job.
+
 ## Writing an update.nu
 
 The shape is **compute everything, then write once**. Nothing touches `package.nix` until every

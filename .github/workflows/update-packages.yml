@@ -34,7 +34,7 @@ jobs:
       - name: Get package list
         id: get-packages
         run: |
-          packages=$(nix eval --json '.#packages.x86_64-linux' --apply 'builtins.attrNames')
+          packages=$(nix develop .#update --command nu scripts/list-active.nu)
           echo "packages=$packages" >> $GITHUB_OUTPUT
 
   update-packages:
@@ -158,7 +158,7 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Run flake check
-        run: nix flake check
+        run: nix develop .#update --command nu scripts/check.nu
 
       - name: Push to main
         run: |
