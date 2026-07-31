@@ -13,7 +13,7 @@
       owner = "tidewave-ai";
       repo = "tidewave_app";
       rev = "v0.4.5";
-      hash = "sha256-5e9x4mrfZ16hbT9teQUIlyZet+P56HSn+805qeUzdms=";
+      hash = "sha256-ul8tF/wq2Rb6UFtJnU71gmE6+H27Rg51VX7ZoFCNHPg=";
     };
     patches = [
       ./remove-src-tauri-from-workspace.patch
