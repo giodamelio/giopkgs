@@ -73,6 +73,7 @@
           deadnix # Find dead Nix code
 
           nushell
+          ast-grep # Structural search/rewrite of Nix files, used by the update scripts
           jq
           gh
           curl
