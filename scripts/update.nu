@@ -157,6 +157,9 @@ export def with-rollback [file: path, body: closure] {
     do $body
   } catch {|e|
     $backup | save -f $file
-    error make {msg: $"rolled back ($file | path basename): ($e.msg)"}
+    # Re-raise the original rather than wrapping it: nushell reports a wrapped
+    # closure failure as "Eval block failed", which hides the actual cause.
+    print -e $"!! rolled back ($file | path basename)"
+    error make $e.raw
   }
 }
