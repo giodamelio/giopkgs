@@ -1,4 +1,5 @@
 #!@shell@
+# shellcheck shell=bash
 # Inker backend launcher.
 #
 # Inker resolves both its read-only assets and its writable uploads relative to

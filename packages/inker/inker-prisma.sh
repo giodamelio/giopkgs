@@ -1,4 +1,5 @@
 #!@shell@
+# shellcheck shell=bash
 # Thin wrapper around Inker's bundled Prisma CLI, with the pinned engines and
 # the bundled schema preconfigured. Example: inker-prisma migrate status
 set -eu
