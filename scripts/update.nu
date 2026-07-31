@@ -77,6 +77,16 @@ export def prefetch-url [url: string, --unpack, --name: string]: nothing -> stri
   ^nix ...$args $url | from json | get hash
 }
 
+# The fetched file itself, for callers that must inspect it rather than just
+# hash it (parseable checks upstream's sha1 pin before trusting the bundle).
+export def prefetch-store-path [url: string]: nothing -> path {
+  ^nix store prefetch-file --json $url | from json | get storePath
+}
+
+export def sha1-of [file: path]: nothing -> string {
+  ^nix hash file --type sha1 --base16 $file | str trim
+}
+
 export def nurl-hash [url: string, rev: string]: nothing -> string {
   let out = (^nurl $url $rev | complete)
   if $out.exit_code != 0 { die $"nurl failed: (tail-of $out.stderr)" }
