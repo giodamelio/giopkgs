@@ -10,13 +10,13 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "mcporter";
-  version = "0.13.3";
+  version = "0.13.4";
 
   src = fetchFromGitHub {
     owner = "steipete";
     repo = "mcporter";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-90mGX0Q3AhTLfdeFGK7OhRd/ZLQh0RfqDwQCp93uKTs=";
+    hash = "sha256-AfGrhXQ8IRkIrBEDBAzecNIN94EyuzFATSpQbKfCBGA=";
   };
 
   nativeBuildInputs = [
