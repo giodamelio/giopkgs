@@ -6,13 +6,13 @@
 }:
 stdenv.mkDerivation rec {
   pname = "codebase-memory-mcp";
-  version = "0.9.0";
+  version = "0.10.1";
 
   src = fetchFromGitHub {
     owner = "DeusData";
     repo = "codebase-memory-mcp";
     tag = "v${version}";
-    hash = "sha256-4P7PVz6vLbokrrKv1QzsWJ3SNULpwyufcXmloHJUVqQ=";
+    hash = "sha256-LS6pPw9biFw2po41wGISOmuvV2U6DLhXE3ibxSxbE64=";
   };
 
   buildInputs = [zlib];
