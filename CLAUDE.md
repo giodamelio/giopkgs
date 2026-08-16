@@ -44,6 +44,10 @@ is itself one of the packages here).
 prefetch-npm-deps, nodejs, jq, gh, curl, python3. `devShells.default` is that plus the authoring
 and linting tools, so the two cannot drift.
 
+`devShells.android` is unrelated to either — it is the JDK/SDK/NDK toolchain for building the
+Pounce Android app, which `packages/pounce` cannot cover. See the comment above it in `flake.nix`
+for why it is a shell rather than a derivation, and for the four-command recipe.
+
 ## Structure
 
 `flake.nix` discovers packages with `nixpkgs.lib.filesystem.packagesFromDirectoryRecursive` over
