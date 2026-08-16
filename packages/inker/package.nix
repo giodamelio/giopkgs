@@ -89,7 +89,7 @@
     npmDeps = fetchNpmDeps {
       name = "${pname}-frontend-npm-deps";
       src = lockDir ./frontend-package-lock.json;
-      hash = "sha256-UU1kuCCRK8RQWZxNUNBhg4To4JvlyLt0PbR/Rd4yoyg=";
+      hash = "sha256-1kBbxLUiMAUxxYodcq+jyNMis9l+9WBrx7H3H/2Uhhw=";
     };
 
     npmFlags = ["--legacy-peer-deps"];
