@@ -12,11 +12,11 @@ rustPlatform.buildRustPackage rec {
   src = fetchFromGitHub {
     owner = "rayfish";
     repo = "rayfish";
-    rev = "38f0b04649cc26ad2925664735954199837765e3";
-    hash = "sha256-TA8kqtHA+qOfcseVwZDtrpU34r0o8E5RU3I+DZUpO78=";
+    rev = "fdbcc4b5c2bc20a3fc9d48ca092761ab9125436a";
+    hash = "sha256-Vpfl+/igxdLGmBkEiArSigzL/nuYd6rhsWyO+1jHzGA=";
   };
 
-  cargoHash = "sha256-FHp6cCKLEIjz66ISasFnYJANOAlRLrYNdVUMqgagM+U=";
+  cargoHash = "sha256-S4WFq8ZHnN5Zm5Fck9q9VLaVjm93+CK5LEjGbPrZpVE=";
 
   passthru.updatePolicy = "branch";
 
