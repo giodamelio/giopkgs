@@ -18,4 +18,6 @@
 # was packaged and why it was shelved.
 {
   # solidtime = "stopped self-hosting it, 2026-05";
+
+  pounce-apk = "fixed-output Android build: ~7 min, needs the network, and its hash moves whenever an upstream Maven artifact does — build it on demand, 2026-08";
 }

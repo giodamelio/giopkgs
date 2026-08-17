@@ -45,8 +45,9 @@ prefetch-npm-deps, nodejs, jq, gh, curl, python3. `devShells.default` is that pl
 and linting tools, so the two cannot drift.
 
 `devShells.android` is unrelated to either — it is the JDK/SDK/NDK toolchain for building the
-Pounce Android app, which `packages/pounce` cannot cover. See the comment above it in `flake.nix`
-for why it is a shell rather than a derivation, and for the four-command recipe.
+Pounce Android app by hand. `nix build .#pounce-apk` builds the same APK unattended; the shell is
+for iterating, and the recipe it documents is what that package automates. Both take their SDK
+from `packages/pounce/android-sdk.nix`, so the versions cannot drift apart.
 
 ## Structure
 

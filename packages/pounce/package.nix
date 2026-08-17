@@ -19,13 +19,17 @@
 
   cli = callPackage ./cli.nix {inherit version src;};
   desktop = callPackage ./desktop.nix {inherit version;};
+
+  # Out of `paths` deliberately: an APK is a file to copy to a phone, not
+  # something with a bin/ to merge into a profile.
+  apk = callPackage ./apk.nix {inherit version src;};
 in
   symlinkJoin {
     name = "pounce-${version}";
     paths = [cli desktop];
 
     passthru = {
-      inherit cli desktop version src;
+      inherit cli desktop apk version src;
     };
 
     meta = {

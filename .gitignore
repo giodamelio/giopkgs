@@ -2,3 +2,4 @@ result
 .direnv/
 update-failures/
 update-meta/
+*.apk
