@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
     owner = "DeusData";
     repo = "codebase-memory-mcp";
     tag = "v${version}";
-    hash = "sha256-d6kgICGVa71gwCfmeRL6gHufQ6GJfGu9XLyqsItPJO4=";
+    hash = "sha256-D16HPtsRve6Y+Ge9vOEwcj41Y35+QEzlFduyKbgZiC8=";
   };
 
   buildInputs = [zlib];
