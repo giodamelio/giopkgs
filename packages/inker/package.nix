@@ -124,7 +124,7 @@
     npmDeps = fetchNpmDeps {
       name = "${pname}-backend-npm-deps";
       src = lockDir ./backend-package-lock.json;
-      hash = "sha256-ioef47PVTu2GVKChIWfY4UVEgQrwRYbVD1luiwsDeU0=";
+      hash = "sha256-ZVz2Hy62EjWmpdnWPb6YWQ3BujvmONF90vuxq+JejhU=";
     };
 
     # --ignore-scripts skips the network-dependent postinstalls of prisma,
