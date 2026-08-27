@@ -29,13 +29,13 @@
   # fetcherVersion 3 is rejected for pnpm >= 11; upstream nixpkgs pins pnpm_10 too.
   pnpm = pnpm_10;
 
-  version = "3.0.5-unstable-2026-08-26";
+  version = "3.1.0-unstable-2026-08-27";
 
   src = fetchFromGitHub {
     owner = "paperless-ngx";
     repo = "paperless-ngx";
-    rev = "aad75b4981b190752e7ee4e1a6b0034112d9b7fe";
-    hash = "sha256-rjwm3SDP4kWmpER/YoKfnHrtmNKw9xclB2zOLvnDADI=";
+    rev = "9009fbb4e9024c70ff4f4abe1ff6c5acdfbc91ef";
+    hash = "sha256-t+pZaUAQJQnm7HGUyFQ8HWy0NqwtOhGu5aMseSZewX8=";
   };
 
   python = python3.override {
@@ -81,7 +81,7 @@
       inherit pnpm;
       inherit (finalAttrs) pname version src;
       fetcherVersion = 3;
-      hash = "sha256-QfTLlgwt4WFdXCOQhjs0jQXdKjYFZkxyXxKAzgq2NZY=";
+      hash = "sha256-Oxit/yTGmC+cQb9FCTlWhBUIwuNu45qM0w6StbaiDM4=";
     };
 
     nativeBuildInputs =
