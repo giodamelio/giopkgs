@@ -34,8 +34,8 @@
   src = fetchFromGitHub {
     owner = "paperless-ngx";
     repo = "paperless-ngx";
-    rev = "40d09ef3091c58f48460aeb79489bb0dc9156afd";
-    hash = "sha256-Fpm/pG/o0+cdbcTncjrFJM7y4oeSwlUgAXbt2r410c4=";
+    rev = "5d9401ac4a851d6970801ab03c797e366cbd8d64";
+    hash = "sha256-+EegvZ9g0i8xFIV4f7bVMtRIJC85e4TnnrCbKQhBMn8=";
   };
 
   python = python3.override {
