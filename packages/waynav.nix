@@ -13,13 +13,13 @@
 }:
 stdenv.mkDerivation rec {
   pname = "waynav";
-  version = "1.3.0";
+  version = "1.4.0";
 
   src = fetchFromGitHub {
     owner = "kovetskiy";
     repo = "waynav";
     tag = version;
-    hash = "sha256-Fktfn/xymV5Vnb96xmpRUX/3RUzPjnx85VKJ73aALs4=";
+    hash = "sha256-L7l3zV4Z451SESFjdq3BVoCgRiAJCuTDI74q7fdVTfQ=";
   };
 
   nativeBuildInputs = [
