@@ -29,13 +29,13 @@
   # fetcherVersion 3 is rejected for pnpm >= 11; upstream nixpkgs pins pnpm_10 too.
   pnpm = pnpm_10;
 
-  version = "3.1.1-unstable-2026-08-31";
+  version = "3.1.2-unstable-2026-09-01";
 
   src = fetchFromGitHub {
     owner = "paperless-ngx";
     repo = "paperless-ngx";
-    rev = "5d9401ac4a851d6970801ab03c797e366cbd8d64";
-    hash = "sha256-+EegvZ9g0i8xFIV4f7bVMtRIJC85e4TnnrCbKQhBMn8=";
+    rev = "1211db5cbb0333b6d6e222878ac10ff5c02f643a";
+    hash = "sha256-04iMCp/W5QP6xLWOEUwzx0ZNbo2VW0o2EzcuqMpaiBM=";
   };
 
   python = python3.override {
