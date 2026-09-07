@@ -5,16 +5,16 @@
 }:
 rustPlatform.buildRustPackage rec {
   pname = "obsidian-mcp";
-  version = "2.5.0";
+  version = "2.5.1";
 
   src = fetchFromGitHub {
     owner = "lstpsche";
     repo = "obsidian-mcp";
     tag = "v${version}";
-    hash = "sha256-aTC0KkuVrwzyTX04ffvpG1rtyHXmYqJLzCccntzVpz8=";
+    hash = "sha256-8uU2i4VxVS1fe7SLQZ8sTnlq83wbcmNQksZYgx0xD9s=";
   };
 
-  cargoHash = "sha256-HdC1m3Jtt4kOonLHfScCLLF6n5gPKglUOuJEf/i1cLs=";
+  cargoHash = "sha256-Ci5vAWVWbHXUZvOpwhdf1/tJrDi4WiV9gpM+dDdSaKo=";
 
   meta = {
     description = "MCP server for Obsidian vaults, with direct filesystem access for AI agents";
