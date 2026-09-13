@@ -26,7 +26,7 @@
 }:
 rustPlatform.buildRustPackage {
   pname = "screenpipe";
-  version = "app-v2.7.26";
+  version = "app-v2.7.30";
 
   src = fetchFromGitHub {
     owner = "screenpipe";
