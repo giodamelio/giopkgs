@@ -1,0 +1,14 @@
+{
+  "version": "0.6.2",
+  "tag": "v0.6.2",
+  "assets": {
+    "x86_64-linux": {
+      "url": "https://github.com/beeper/cli/releases/download/v0.6.2/beeper-cli-0.6.2-linux-x64.tar.gz",
+      "hash": "sha256-qIHh0ryR4xIYslFxZkTsX40WHVzLMOfqtmzyumQQUR0="
+    },
+    "aarch64-linux": {
+      "url": "https://github.com/beeper/cli/releases/download/v0.6.2/beeper-cli-0.6.2-linux-arm64.tar.gz",
+      "hash": "sha256-K9NwQ6TthjYh7cWeKKqmUugZPlWryg6Ud/Wurhxl1ik="
+    }
+  }
+}
