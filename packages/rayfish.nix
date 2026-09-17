@@ -7,13 +7,13 @@ rustPlatform.buildRustPackage rec {
   pname = "rayfish";
   # Tracks the tip of the upstream default branch rather than a tagged release.
   # nix-update (branch mode) bumps rev/version/hash automatically.
-  version = "nightly-unstable-2026-09-07";
+  version = "nightly-unstable-2026-09-17";
 
   src = fetchFromGitHub {
     owner = "rayfish";
     repo = "rayfish";
-    rev = "092ea94e4d9316bb947a85ab04a4e5bce1bc5361";
-    hash = "sha256-uROwEs6Z+JZys0H/Vk2jjk5yNU155Xurj7j0cr4mpjo=";
+    rev = "d26f73552aab073d78adfc83b185162358cd38f9";
+    hash = "sha256-A8+h1DL9saGgl7lvVPciDag1vp9wPandyasB0wqPFKk=";
   };
 
   cargoHash = "sha256-Hzk95/ZqLsf97kQHkPElDJJYLIIpM6OlIVn1yzs9vIo=";
