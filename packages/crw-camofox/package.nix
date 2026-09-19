@@ -12,8 +12,8 @@ callPackage ../crw/common.nix {} {
   src = fetchFromGitHub {
     owner = "adambenhassen";
     repo = "crw-camofox";
-    rev = "86fe44b560b2a3ea6c32ff18ab38a7facf684eb4";
-    hash = "sha256-G00k8/38oaQQc6Cjx3wZel2cKKmiZpjlePvEy6bj/BQ=";
+    rev = "796d8c9fa695165867ba8a778f39c9e575e8e154";
+    hash = "sha256-LuxBtGy8aKcYeQPR7ptiZPLj3vlea6PD04r4zZiOaI0=";
   };
 
   cargoHash = "sha256-srgQx/Vr3vVKY3d3v5wuJRkXsg0KQ4buREpQyDhOkh0=";
