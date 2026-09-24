@@ -7,16 +7,16 @@ rustPlatform.buildRustPackage rec {
   pname = "rayfish";
   # Tracks the tip of the upstream default branch rather than a tagged release.
   # nix-update (branch mode) bumps rev/version/hash automatically.
-  version = "nightly-unstable-2026-09-23";
+  version = "nightly-unstable-2026-09-24";
 
   src = fetchFromGitHub {
     owner = "rayfish";
     repo = "rayfish";
-    rev = "9f19d875f82acaf51599c64fb2346994bebc62e4";
-    hash = "sha256-o5Run5jUIcDFwTRZ1T3rm9/c/33YH3XnoVTq14ZjIU4=";
+    rev = "8970a3db96de5c85a1f473f8fce207b9795132d3";
+    hash = "sha256-bVE/naq6K2m364ZpDOwk+3xji/h1mfQM70dw2xqPjos=";
   };
 
-  cargoHash = "sha256-bcIYlEWxh7v0zgRSEBHC0G/+5mcFRR8bjg8aooO0SNE=";
+  cargoHash = "sha256-ZstoSf0VEArkhZfTPx/7WEUuAYFSrxEkm5avRT5/bcc=";
 
   # The CLI colorizes when stdout is a terminal, and Nix runs the builder on a
   # pty — so the renderer tests, which assert on unstyled text, see ANSI escapes
@@ -35,7 +35,12 @@ rustPlatform.buildRustPackage rec {
     "--skip=ssh::tests::an_authenticated_session_outlives_the_login_grace"
     "--skip=ssh::tests::concurrent_channels_keep_their_own_output_and_pty"
     "--skip=ssh::tests::every_channel_on_one_connection_runs_its_command"
+    "--skip=ssh::tests::keepalives_preserve_idle_sessions_and_close_unresponsive_clients"
     "--skip=ssh::tests::session_env_takes_locale_and_drops_the_rest"
+    # Uses uid 1000 as its unprivileged caller and reads the config without
+    # holding CONFIG_ENV_LOCK. The sandbox build user is also uid 1000, so a
+    # concurrent test that makes the current euid the operator races it.
+    "--skip=daemon::net_config_authz_tests::net_config_set_is_a_mutation_and_net_config_get_is_an_open_read"
   ];
 
   passthru.updatePolicy = "branch";
