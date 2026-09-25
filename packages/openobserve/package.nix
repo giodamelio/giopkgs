@@ -138,15 +138,21 @@ in
         ./build.rs.patch
       ];
 
+      # vortex's lib.rs include_str!s its README, which lives at the git
+      # workspace root and so is left out of the vendored crate.
       preBuild = ''
+        for crate in "$NIX_BUILD_TOP"/${finalAttrs.cargoDeps.name}/source-git-*/vortex-0.1.0; do
+          touch "$crate/README.md"
+        done
         cp -r ${web}/share/openobserve-ui web/dist
       '';
 
-      cargoHash = lib.fakeHash;
+      cargoHash = "sha256-kPMJy5E2WebJHrbAZerHfDkAZs2ahEQZRWZIJ3ZXBMI=";
 
       nativeBuildInputs = [
         pkg-config
         protobuf
+        rustPlatform.bindgenHook
       ];
 
       buildInputs = [
