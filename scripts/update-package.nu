@@ -4,6 +4,7 @@
 # Dispatch, in order:
 #   1. packages/<attr>/update.{nu,sh}  — run it, from the checkout
 #   2. passthru.updatePolicy           — "skip" | "branch"
+#      "branch" follows passthru.updateBranch when set, else the default branch
 #   3. otherwise                       — nix-update --flake <attr>
 #
 # Running the script from the checkout rather than from passthru.updateScript is
@@ -44,8 +45,14 @@ def dispatch [package: string]: nothing -> record {
       {exit_code: 0, stdout: "", stderr: ""}
     }
     "branch" => {
-      print $"Updating ($package) from its default branch"
-      ^nix-update --flake --version=branch $package | complete
+      let branch = (nix-eval-or $"($package).passthru.updateBranch" "")
+      if $branch == "" {
+        print $"Updating ($package) from its default branch"
+        ^nix-update --flake --version=branch $package | complete
+      } else {
+        print $"Updating ($package) from branch ($branch)"
+        ^nix-update --flake $"--version=branch=($branch)" $package | complete
+      }
     }
     _ => {
       print $"Updating ($package) with nix-update"

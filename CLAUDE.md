@@ -87,7 +87,7 @@ Dispatch is by convention, in order:
    together or a hash lives somewhere `nix-update` cannot see.
 2. `passthru.updatePolicy` — `"skip"` for `overrideAttrs` wrappers that move when the flake inputs
    do and would only be corrupted by `nix-update`; `"branch"` for packages tracking a default
-   branch instead of releases.
+   branch instead of releases, or the branch named by `passthru.updateBranch` when set.
 3. `nix-update --flake <name>` otherwise.
 
 **Never declare `passthru.updateScript`.** A Nix path literal copies the script into the store as a
