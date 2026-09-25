@@ -16,6 +16,7 @@ def main [
   event_name: string = "" # the triggering GitHub event
   base_ref: string = "main" # the PR base branch
   scope: string = "active" # active | all | archived-only
+  base: string = "" # the commit to diff against, when the caller knows it
 ] {
   validate (all-packages)
 
@@ -29,7 +30,18 @@ def main [
     return
   }
 
-  let compare = if $event_name == "pull_request" { $"origin/($base_ref)" } else { "HEAD^" }
+  # A push can carry several commits, and an auto-update run carries one per
+  # package, so HEAD^ alone would only see the last of them.
+  let compare = if $event_name == "pull_request" {
+    $"origin/($base_ref)"
+  } else if $base != "" {
+    if (^git cat-file -e $"($base)^{commit}" | complete).exit_code != 0 {
+      error make {msg: $"base commit ($base) is not in the checkout; a force push leaves the previous tip unreachable, so there is nothing to diff against"}
+    }
+    $base
+  } else {
+    "HEAD^"
+  }
   let changed = (^git diff --name-only $compare HEAD | lines)
 
   # A flake or workflow change can affect every package, so rebuild all of them.

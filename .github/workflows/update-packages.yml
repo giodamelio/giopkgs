@@ -165,6 +165,9 @@ jobs:
     needs: prepare-for-build
     if: needs.prepare-for-build.outputs.has_changes == 'true'
     runs-on: ubuntu-latest
+    outputs:
+      base: ${{ steps.push.outputs.base }}
+      head: ${{ steps.push.outputs.head }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -189,13 +192,31 @@ jobs:
         run: nix develop .#update --command nu scripts/check.nu
 
       - name: Push to main
+        id: push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          echo "base=$(git rev-parse origin/main)" >> "$GITHUB_OUTPUT"
+          echo "head=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           git push origin HEAD:main
 
       - name: Delete temp branch
         run: git push origin --delete auto-update-${{ github.run_id }}
+
+  # A push made with GITHUB_TOKEN starts no workflows, so Build never sees the
+  # auto-update commits on its own.
+  build:
+    name: Build updated packages
+    needs: verify-and-push
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/build.yml
+    with:
+      ref: ${{ needs.verify-and-push.outputs.head }}
+      base: ${{ needs.verify-and-push.outputs.base }}
+      push-to-nix-cache: true
+    secrets: inherit
 
   # update-package.nu deliberately never fails its own job, so one broken
   # upstream cannot stop the other packages from being committed. This job

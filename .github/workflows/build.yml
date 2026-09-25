@@ -5,6 +5,19 @@ on:
     branches: [main]
   pull_request:
   workflow_call:
+    inputs:
+      ref:
+        description: Commit to build
+        type: string
+        required: true
+      base:
+        description: Commit to diff against when picking packages
+        type: string
+        required: true
+      push-to-nix-cache:
+        description: Push the results to cache.gio.ninja
+        type: boolean
+        default: false
   workflow_dispatch:
     inputs:
       scope:
@@ -26,6 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ inputs.ref }}
           fetch-depth: 0
 
       - name: Check flake
@@ -53,18 +67,33 @@ jobs:
           nix develop .#update --command nu scripts/detect-changes.nu
           "${{ github.event_name }}" "${{ github.base_ref }}"
           "${{ inputs.scope || 'active' }}"
+          "${{ inputs.base || github.event.before }}"
 
   build:
     name: Build ${{ matrix.package }}
     needs: detect-changes
     if: needs.detect-changes.outputs.packages != '[]'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      # niks3 only accepts OIDC tokens from refs/heads/main, so every other run
+      # stays off the mesh. A called run reports its caller's event, never
+      # workflow_call, hence the explicit input.
+      PUSH_TO_NIX_CACHE: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || inputs.push-to-nix-cache) }}
+      # Pinned rather than built from .#rayfish, so the client is always a
+      # Cachix download and never a compile. Bump it by pushing the new build
+      # and re-pinning it as rayfish-ci-client.
+      RAYFISH_CLIENT: /nix/store/n185m4d9fkw1ifs9qijf28kyb6rpir2n-rayfish-0-unstable-2026-09-25
     strategy:
       fail-fast: true
       matrix:
         package: ${{ fromJson(needs.detect-changes.outputs.packages) }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
@@ -82,3 +111,96 @@ jobs:
 
       - name: Build ${{ matrix.package }}
         run: nix build .#packages.x86_64-linux.${{ matrix.package }}
+
+      # A separate pin from rayfish-ci-client, which is moved by hand, so that
+      # rotating this one can never expire the path the workflows fetch.
+      - name: Pin rayfish in Cachix
+        if: env.PUSH_TO_NIX_CACHE == 'true' && matrix.package == 'rayfish'
+        run: |
+          path=$(nix path-info .#packages.x86_64-linux.rayfish)
+          cachix push giopkgs "$path"
+          cachix pin giopkgs rayfish "$path" --keep-revisions 3
+
+      - name: Fetch rayfish
+        if: env.PUSH_TO_NIX_CACHE == 'true'
+        run: |
+          out=$(nix build --no-link --print-out-paths "$RAYFISH_CLIENT")
+          echo "RAY=$out/bin/ray" >> "$GITHUB_ENV"
+
+      - name: Start rayfish daemon
+        if: env.PUSH_TO_NIX_CACHE == 'true'
+        run: |
+          # The log belongs to the runner user so later steps can read it without sudo.
+          # shellcheck disable=SC2024
+          sudo "$RAY" daemon > "$RUNNER_TEMP/ray-daemon.log" 2>&1 &
+          # `ray status` exits 0 with no daemon running, so wait for the IPC socket instead.
+          for _ in $(seq 60); do
+            [ -S /var/run/rayfish/rayfish.sock ] && exit 0
+            sleep 1
+          done
+          echo "::error::rayfish daemon did not respond within 60s"
+          exit 1
+
+      - name: Join nix-cache network
+        if: env.PUSH_TO_NIX_CACHE == 'true'
+        env:
+          RAYFISH_NIX_CACHE_KEY: ${{ secrets.RAYFISH_NIX_CACHE_KEY }}
+        run: >-
+          sudo "$RAY" join "$RAYFISH_NIX_CACHE_KEY"
+          --name nix-cache
+          --hostname gha-${{ github.repository_owner }}-${{ github.run_id }}-${{ github.run_attempt }}-${{ strategy.job-index }}
+
+      - name: Wait for gallium
+        if: env.PUSH_TO_NIX_CACHE == 'true'
+        run: |
+          for _ in $(seq 60); do
+            sudo "$RAY" ping gallium && exit 0
+            sleep 2
+          done
+          echo "::error::gallium did not answer ping within 120s"
+          exit 1
+
+      - name: Map cache hostnames to gallium
+        if: env.PUSH_TO_NIX_CACHE == 'true'
+        run: |
+          for _ in $(seq 30); do
+            addr=$(getent ahostsv6 gallium.nix-cache.ray | awk 'NR == 1 {print $1}') && [ -n "$addr" ] && break
+            sleep 1
+          done
+          if [ -z "$addr" ]; then
+            echo "::error::gallium.nix-cache.ray did not resolve within 30s"
+            exit 1
+          fi
+          echo "$addr cache.gio.ninja s3.garage.gio.ninja" | sudo tee -a /etc/hosts
+
+      - name: Push ${{ matrix.package }} to cache.gio.ninja
+        if: env.PUSH_TO_NIX_CACHE == 'true'
+        run: |
+          # No expires_at in the output, so niks3 runs this for every token it
+          # needs and a long upload never holds an expired one.
+          token_script="$RUNNER_TEMP/niks3-oidc-token"
+          cat > "$token_script" <<'EOF'
+          #!/usr/bin/env bash
+          set -euo pipefail
+          curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://cache.gio.ninja" \
+            | jq '{token: .value}'
+          EOF
+          chmod +x "$token_script"
+          mapfile -t paths < <(nix path-info .#packages.x86_64-linux.${{ matrix.package }})
+          nix run github:Mic92/niks3/v1.13.0 -- push \
+            --server-url https://cache.gio.ninja \
+            --auth-token-script "$token_script" \
+            "${paths[@]}"
+
+      - name: Diagnose mesh
+        if: failure() && env.PUSH_TO_NIX_CACHE == 'true'
+        run: |
+          echo "::group::ray status"; sudo "$RAY" status || true; echo "::endgroup::"
+          echo "::group::ray netcheck"; sudo "$RAY" netcheck || true; echo "::endgroup::"
+          echo "::group::resolvectl status"; resolvectl status || true; echo "::endgroup::"
+          echo "::group::daemon log"; cat "$RUNNER_TEMP/ray-daemon.log" || true; echo "::endgroup::"
+
+      - name: Leave nix-cache network
+        if: always() && env.PUSH_TO_NIX_CACHE == 'true'
+        run: sudo "$RAY" leave nix-cache
