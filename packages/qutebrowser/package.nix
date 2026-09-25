@@ -1,18 +1,18 @@
 {pkgs, ...}:
 pkgs.qutebrowser.overrideAttrs (oldAttrs: {
-  version = "3.6.3";
+  version = "3.7.0-unstable-2026-09-25";
 
   src = pkgs.fetchFromGitHub {
     owner = "giodamelio";
     repo = "qutebrowser";
-    rev = "e48c8c5e79479032d8aecd7a7ae3874702436a9a";
-    hash = "sha256-NRq6klZPPBDN2LvYLEsdbjkD8PjoSRToaarNATWzBrg=";
+    rev = "4d5c4a83d5a14886180e7bccdc042e2e61ee509a";
+    hash = "sha256-DCjEjNFWKBDH9pKgXxcyKWmULZTCHMk4P3s2qsxTSGM=";
   };
 
   passthru =
     (oldAttrs.passthru or {})
     // {
-      updatePolicy = "skip";
+      updatePolicy = "branch";
     };
 
   meta =
