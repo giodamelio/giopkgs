@@ -5,15 +5,15 @@
 }:
 rustPlatform.buildRustPackage rec {
   pname = "rayfish";
-  # Tracks the tip of the upstream default branch rather than a tagged release.
+  # Tracks the tip of passthru.updateBranch on our fork rather than a tagged release.
   # nix-update (branch mode) bumps rev/version/hash automatically.
-  version = "nightly-unstable-2026-09-24";
+  version = "0-unstable-2026-09-25";
 
   src = fetchFromGitHub {
-    owner = "rayfish";
+    owner = "giodamelio";
     repo = "rayfish";
-    rev = "8970a3db96de5c85a1f473f8fce207b9795132d3";
-    hash = "sha256-bVE/naq6K2m364ZpDOwk+3xji/h1mfQM70dw2xqPjos=";
+    rev = "fcc98a144ba0b91229de4f520fa9416649ae0535";
+    hash = "sha256-YeUwqE4/8R/T8W9bQh/4BxAHmwFilRsYeV2axE76eGw=";
   };
 
   cargoHash = "sha256-ZstoSf0VEArkhZfTPx/7WEUuAYFSrxEkm5avRT5/bcc=";
@@ -43,7 +43,10 @@ rustPlatform.buildRustPackage rec {
     "--skip=daemon::net_config_authz_tests::net_config_set_is_a_mutation_and_net_config_get_is_an_open_read"
   ];
 
-  passthru.updatePolicy = "branch";
+  passthru = {
+    updatePolicy = "branch";
+    updateBranch = "network-flow-labels";
+  };
 
   meta = {
     description = "P2P mesh VPN powered by iroh — connect peers by cryptographic identity, not IP address";
