@@ -9,12 +9,6 @@ pkgs.qutebrowser.overrideAttrs (oldAttrs: {
     hash = "sha256-OTNMy0NOwwU3WnZTkZvdJsRS94EsWaRDTCEEiSUOtCM=";
   };
 
-  passthru =
-    (oldAttrs.passthru or {})
-    // {
-      updatePolicy = "branch";
-    };
-
   meta =
     oldAttrs.meta
     // {
