@@ -33,7 +33,7 @@ in
 
     inherit src;
 
-    cargoHash = "sha256-g+r5dLgw8LRwpRuh0dtFi1l5ECXVhwQLa6bB+JRuESo=";
+    cargoHash = "sha256-aZs4np4FaGIa0JqP16E2X7bPE316MUeXZgIwfWKI5eY=";
 
     # Build only the CLI crate from the workspace
     buildAndTestSubdir = "tidewave-cli";
