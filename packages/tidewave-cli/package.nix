@@ -12,8 +12,8 @@
     src = fetchFromGitHub {
       owner = "tidewave-ai";
       repo = "tidewave_app";
-      rev = "v0.4.5";
-      hash = "sha256-ul8tF/wq2Rb6UFtJnU71gmE6+H27Rg51VX7ZoFCNHPg=";
+      rev = "v1.1.0";
+      hash = "sha256-StSLfM8gVPhfSp/T1C2uyhPqgUreD7N54u6Psh6yZH0=";
     };
     patches = [
       ./remove-src-tauri-from-workspace.patch
@@ -29,11 +29,11 @@
 in
   rustPlatform.buildRustPackage rec {
     pname = "tidewave-cli";
-    version = "0.4.5";
+    version = "1.1.0";
 
     inherit src;
 
-    cargoHash = "sha256-aZs4np4FaGIa0JqP16E2X7bPE316MUeXZgIwfWKI5eY=";
+    cargoHash = "sha256-Q/7dUvje1jrNA20+6y+GEPKERITIW+bTtU8st67ZPag=";
 
     # Build only the CLI crate from the workspace
     buildAndTestSubdir = "tidewave-cli";
