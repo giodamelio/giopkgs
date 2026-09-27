@@ -29,13 +29,13 @@
   # fetcherVersion 3 is rejected for pnpm >= 11; upstream nixpkgs pins pnpm_10 too.
   pnpm = pnpm_10;
 
-  version = "3.1.3-unstable-2026-09-04";
+  version = "3.2.1-unstable-2026-09-23";
 
   src = fetchFromGitHub {
     owner = "paperless-ngx";
     repo = "paperless-ngx";
-    rev = "ae9529551d17395c69dedf63a4472b45df0dab0f";
-    hash = "sha256-XLlZI4htbXYrFfk101dEYcrXuuKrcbzAFqhjX9hGbKM=";
+    rev = "c63afb47b27951cb6c61e68b6d77a5fd0eedd686";
+    hash = "sha256-NlFm1gWp1Q3Ui9Nn8GP+xZY0QLmBvlEViZ+L+rUHWKw=";
   };
 
   python = python3.override {
@@ -53,6 +53,32 @@
         };
 
         pytestFlags = [];
+      };
+
+      whoosh-compat = prev.buildPythonPackage rec {
+        pname = "whoosh-compat";
+        version = "0.3.0";
+        pyproject = true;
+
+        src = fetchPypi {
+          pname = "whoosh_compat";
+          inherit version;
+          hash = "sha256-p1kOoPF4xgyoN3R1LQ1RHF1ysgNXu/NhIjqqsS49GBM=";
+        };
+
+        build-system = [prev.hatchling];
+
+        dependencies = [prev.python-dateutil];
+
+        optional-dependencies.tantivy = [prev.tantivy];
+
+        pythonImportsCheck = ["whoosh_compat"];
+
+        meta = {
+          description = "Whoosh query-language parser emitting programmatic tantivy queries";
+          homepage = "https://github.com/stumpylog/whoosh-compat";
+          license = lib.licenses.bsd2;
+        };
       };
 
       # tesseract5 may be overwritten in the paperless module and we need to propagate that to make the closure reduction effective
@@ -81,7 +107,7 @@
       inherit pnpm;
       inherit (finalAttrs) pname version src;
       fetcherVersion = 3;
-      hash = "sha256-kXje10ME7QUTnsznPf2SF1dt3YM3rxhfo9GSeigg3fc=";
+      hash = "sha256-jID478Cgv3+8qfLvPVT+9QzkXlxCBjBtviIWLNBaC5o=";
     };
 
     nativeBuildInputs =
@@ -227,11 +253,11 @@ in
         llama-index-llms-ollama
         llama-index-llms-openai
         llama-index-llms-openai-like
-        nltk
         ocrmypdf
         openai
         pathvalidate
         pdf2image
+        pillow-heif
         python-dateutil
         python-dotenv
         python-gnupg
@@ -249,11 +275,13 @@ in
         torch
         watchfiles
         whitenoise
+        whoosh-compat
         zxing-cpp
       ]
       ++ django-allauth.optional-dependencies.mfa
       ++ django-allauth.optional-dependencies.socialaccount
-      ++ redis.optional-dependencies.hiredis;
+      ++ redis.optional-dependencies.hiredis
+      ++ whoosh-compat.optional-dependencies.tantivy;
 
     # Dummy secret key only used at build time for collectstatic/compilemessages
     PAPERLESS_SECRET_KEY = "build-time-dummy-key";
