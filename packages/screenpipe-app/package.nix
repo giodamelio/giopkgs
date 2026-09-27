@@ -36,14 +36,13 @@
   # Node/frontend build
   cacert,
 }: let
-  version = "app-v2.5.150";
-  rev = "ce8374893f1931a83cf1d3dccc4ead634a763074";
+  version = "app-v2.7.76";
 
   src = fetchFromGitHub {
     owner = "screenpipe";
     repo = "screenpipe";
-    inherit rev;
-    hash = "sha256-3A8WnAN7Q8gWkCGwOq/kP2NG4T1kMhaX72099wz44is=";
+    tag = version;
+    hash = "sha256-+7e+vPrpQ518xza2iZ6XZ+n4IS6HXemr6bUnbzkxOz8=";
   };
 
   # Build the Next.js frontend first
@@ -60,6 +59,9 @@
       export HOME=$TMPDIR
       bun install --frozen-lockfile
 
+      # next.config.mjs refuses to build without the localization snapshot
+      bun scripts/i18n/prepare.mjs
+
       # Build Next.js static export
       bun node_modules/next/dist/bin/next build
     '';
@@ -70,33 +72,20 @@
 
     outputHashMode = "recursive";
     outputHashAlgo = "sha256";
-    outputHash = "sha256-h7K8m08MNfd5NXBHvdtbcKFDXks2ZHzxymVYFbg4688=";
+    outputHash = "sha256-HHFaLhkj++dgZtjnWF6wmP4LpPMZf/EVv3xs49KuMNI=";
   };
 in
   rustPlatform.buildRustPackage {
     pname = "screenpipe-app";
     inherit version src;
 
-    cargoLock = {
-      lockFile = ./Cargo.lock;
-      outputHashes = {
-        # Shared with CLI
-        "accessibility-0.3.0" = "sha256-SBYB62kFmldfangDBtnLqA+T9iUfn+GCCvi0p6E5ou8=";
-        "antirez-asr-sys-0.1.0" = "sha256-MtQ9UXDZZouY5+8FCCNKLDJtjlceC8igCGJbXD58z/A=";
-        "cidre-0.15.0" = "sha256-u9n/RmUXk4dpEvI+8r6iVNTaSyysi0pe6zNZt4UHh4g=";
-        "cpal-0.15.3" = "sha256-2oTXPKJA9WrgL2it2FPKb73SSN3XV2zaMWgzbzUknFo=";
-        "hf-hub-0.3.2" = "sha256-hTAdRgJKCN4kTyZXy4SOHPEhBY4/UX+tWJPoUroKLD0=";
-        "rusty-tesseract-1.1.10" = "sha256-XT74zGn+DetEBUujHm4Soe2iorQcIoUeZbscTv+64hw=";
-        "sck-rs-0.1.0" = "sha256-OZCDLsbMGS0AAo4bMgrnuVaMbEYDGMJ261Pl/NRnEgc=";
-        "vad-rs-0.2.0" = "sha256-nkmClKJqj+6vX1EITL0IwR0pqHXoc4/LGJQMgZ3FzGA=";
-        "whisper-rs-0.16.0" = "sha256-x2gnbpPHBY6bw8132xEQeh2w7BriSJoxoGQtRhtVTWs=";
-        # App-specific (different commit from CLI)
-        "ffmpeg-sidecar-2.3.0" = "sha256-kOd/zWlxC/Km1pDErMdzeo3h1wJ7WOYFKJNj6ayMjdA=";
-        # App-only deps
-        "fix-path-env-0.0.0" = "sha256-UygkxJZoiJlsgp8PLf1zaSVsJZx1GGdQyTXqaFv3oGk=";
-        "tauri-nspanel-2.0.1" = "sha256-pQgv/Lkc9yE+DSv+MdOV1NZRj2nkMhAm+Wn41qvdvvE=";
-        "windows-icons-0.1.1" = "sha256-Lrw9W71ihFYsC4EHThfQdmeJdEW3dE71NiNrFKZp7Ks=";
+    cargoDeps = rustPlatform.fetchCargoVendor {
+      name = "screenpipe-app-${version}";
+      src = lib.fileset.toSource {
+        root = ./.;
+        fileset = ./Cargo.lock;
       };
+      hash = "sha256-mu7/NUWY1sV7+2aLeenqOtrBLGzc8Z8IZHeLtCeuB/U=";
     };
 
     # The Tauri app crate is at apps/screenpipe-app-tauri/src-tauri
@@ -161,9 +150,9 @@ in
 
     preBuild = ''
       # Fix upstream bug: link name should be "openblas" not "libopenblas"
-      local vendor="$NIX_BUILD_TOP/cargo-vendor-dir"
-      chmod +w "$vendor"/antirez-asr-sys-*/
-      substituteInPlace "$vendor"/antirez-asr-sys-*/build.rs \
+      local vendor="$NIX_BUILD_TOP/$(stripHash "$cargoDeps")"
+      chmod +w "$vendor"/source-git-*/antirez-asr-sys-*/
+      substituteInPlace "$vendor"/source-git-*/antirez-asr-sys-*/build.rs \
         --replace-fail 'dylib=libopenblas' 'dylib=openblas'
     '';
 
@@ -171,7 +160,8 @@ in
     buildFeatures = ["custom-protocol" "pulseaudio" "qwen3-asr" "parakeet"];
 
     env = {
-      ORT_LIB_LOCATION = "${onnxruntime}";
+      ORT_LIB_LOCATION = "${lib.getLib onnxruntime}/lib";
+      ORT_PREFER_DYNAMIC_LINK = "1";
       NIX_CFLAGS_COMPILE = "-D_GNU_SOURCE";
     };
 
