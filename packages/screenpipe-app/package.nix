@@ -185,6 +185,8 @@ in
         --set WEBKIT_DISABLE_COMPOSITING_MODE 1
     '';
 
+    passthru = {inherit frontend;};
+
     meta = {
       description = "Screenpipe desktop app - AI screen and audio recording with local UI";
       homepage = "https://github.com/screenpipe/screenpipe";
