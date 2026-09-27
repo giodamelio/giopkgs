@@ -19,12 +19,12 @@
   # Aliases rather than literals inside each record: update.nu edits these by
   # binding name, and two bindings both spelled `hash` in one attrset cannot be
   # told apart structurally.
-  amd64Hash = "sha256-57dnRrfXFEOOtDjnXRodAP1EDzGl4lCogdnmIRf3Sq4=";
-  arm64Hash = "sha256-gBoxaeWHeR13n7cdan/999EkNRvQalFMveSZFX9MWY0=";
+  amd64Hash = "sha256-CFVD+Pp/+mTtg3bZMyB0/onUJfR/zCSAZurmP2rIehI=";
+  arm64Hash = "sha256-sdA+KqU9EyhmNF080h4KQWe9z3TAK4VahnwuVgFXX0s=";
 
   debs = {
     x86_64-linux = {
-      arch = "amd64";
+      arch = "x64";
       hash = amd64Hash;
     };
     aarch64-linux = {
@@ -42,7 +42,7 @@ in
     inherit version;
 
     src = fetchurl {
-      url = "https://github.com/pounce-ai/pounce/releases/download/v${version}/pounce_${version}_${deb.arch}.deb";
+      url = "https://github.com/pounce-ai/pounce/releases/download/v${version}/Pounce-${version}-Linux-${deb.arch}.deb";
       inherit (deb) hash;
     };
 

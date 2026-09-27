@@ -41,18 +41,20 @@ buildNpmPackage {
   npmDeps = fetchNpmDeps {
     name = "pounce-cli-npm-deps";
     src = ./cli-npm;
-    hash = "sha256-Y9Zs/67c93hOvysZauxuR/soiZyEEbRvLEnHcfQXk7E=";
+    hash = "sha256-NxGVboqAWBiJIjbyHA1il+ZgGO12wUpEututa43tEhg=";
   };
 
   nativeBuildInputs = [bun];
 
   # `bun build` inlines the workspace-private bridge, and those files import
-  # node-machine-id and @pounce/transcript. Resolution walks up from
-  # apps/bridge/, which never reaches apps/cli/node_modules — so the repo root
-  # gets one pointing at it, and the workspace package gets an entry inside.
+  # node-machine-id and the @pounce/* workspace packages. Resolution walks up
+  # from apps/bridge/, which never reaches apps/cli/node_modules — so the repo
+  # root gets one pointing at it, and each workspace package gets an entry inside.
   preBuild = ''
     mkdir -p node_modules/@pounce
-    ln -s ../../../../packages/transcript node_modules/@pounce/transcript
+    for p in meter redact transcript; do
+      ln -s ../../../../packages/$p node_modules/@pounce/$p
+    done
     ln -s "$PWD/node_modules" ../../node_modules
   '';
 

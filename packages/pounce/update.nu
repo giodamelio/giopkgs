@@ -43,7 +43,7 @@ def manifest-at [tag: string, app: string]: nothing -> record {
 }
 
 def deb-url [version: string, arch: string]: nothing -> string {
-  $"https://github.com/($REPO)/releases/download/v($version)/pounce_($version)_($arch).deb"
+  $"https://github.com/($REPO)/releases/download/v($version)/Pounce-($version)-Linux-($arch).deb"
 }
 
 # The CLI manifest as npm should see it: no devDependencies to install, plus the
@@ -87,7 +87,7 @@ def main [] {
 
   info "computing hashes"
   let src_hash = (nurl-hash $"https://github.com/($REPO)" $tag)
-  let amd64_hash = (prefetch-url (deb-url $version "amd64"))
+  let amd64_hash = (prefetch-url (deb-url $version "x64"))
   let arm64_hash = (prefetch-url (deb-url $version "arm64"))
   let npm_hash = (prefetch-npm ($npm_dir | path join "package-lock.json"))
 
