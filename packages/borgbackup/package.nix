@@ -28,19 +28,30 @@
           hash = "sha256-9iFTQPAM6AAogcRUoCw5/bECNiGUwmAarEiwMJ+rqbk=";
         };
       });
+      # 2.0.0b24 requires shtab >= 1.11.0 for correct zsh and fish completions.
+      shtab = prev.shtab.overridePythonAttrs (old: rec {
+        version = "1.12.1";
+        src = fetchFromGitHub {
+          owner = "tqdm";
+          repo = "shtab";
+          tag = "v${version}";
+          hash = "sha256-M3otTelW+tkxnB5WRQGQZhwucA9CUif0ahPl5WhgUOw=";
+        };
+        nativeCheckInputs = old.nativeCheckInputs ++ [prev.click];
+      });
     };
   };
 
   borghash = python.pkgs.buildPythonPackage rec {
     pname = "borghash";
-    version = "0.1.1";
+    version = "0.2.1";
     pyproject = true;
 
     src = fetchFromGitHub {
       owner = "borgbackup";
       repo = "borghash";
       tag = version;
-      hash = "sha256-aJplDFMHoDzTOD/8Z9OGhWDvKapXJ5kiho/3b4aCwa4=";
+      hash = "sha256-IBykQrB3WG4Vq3SbEfK8QAUDxXglwbnRncnfLRhKWkA=";
     };
 
     env.SETUPTOOLS_SCM_PRETEND_VERSION = version;
@@ -64,14 +75,14 @@
 
   borgstore = python.pkgs.buildPythonPackage rec {
     pname = "borgstore";
-    version = "0.5.5";
+    version = "0.6.4";
     pyproject = true;
 
     src = fetchFromGitHub {
       owner = "borgbackup";
       repo = "borgstore";
       tag = version;
-      hash = "sha256-tgH0jw5flLmPl7hAStGZ+mCWaOm6P4sbBDObVcHCwTQ=";
+      hash = "sha256-123ei6q1Jv6/CYZ1QSzgUQKxByjiGPIz0mqKbcZcAWE=";
     };
 
     env.SETUPTOOLS_SCM_PRETEND_VERSION = version;
@@ -84,6 +95,7 @@
     dependencies = with python.pkgs; [
       paramiko
       requests
+      blake3
     ];
 
     pythonImportsCheck = ["borgstore"];
@@ -98,26 +110,17 @@
 in
   python.pkgs.buildPythonApplication (finalAttrs: {
     pname = "borgbackup";
-    version = "2.0.0b22";
+    version = "2.0.0b24";
     pyproject = true;
 
     src = fetchFromGitHub {
       owner = "borgbackup";
       repo = "borg";
       tag = finalAttrs.version;
-      hash = "sha256-d+ZhqTwfIQkkRszjcVqyw3j3ME5Yxh1W/+sHQJZ0S7o=";
+      hash = "sha256-L+37gV06X7csT5yDFyJF5GCoMr00pvPLyDmdMA2dGtg=";
     };
 
     env.SETUPTOOLS_SCM_PRETEND_VERSION = finalAttrs.version;
-
-    # 2.0.0b22 added `tag.strict = false` under [tool.setuptools_scm]. Every key
-    # in that table is splatted into Configuration(), and the vcs-versioning
-    # nixpkgs ships has no `tag` field, so the build dies with
-    # "unexpected keyword argument 'tag'". Dropping it is safe: the version comes
-    # from SETUPTOOLS_SCM_PRETEND_VERSION above, so tags are never parsed at all.
-    postPatch = ''
-      substituteInPlace pyproject.toml --replace-fail "tag.strict = false" ""
-    '';
 
     build-system = with python.pkgs; [
       cython
@@ -150,7 +153,6 @@ in
         msgpack
         packaging
         platformdirs
-        argon2-cffi
         shtab
         jsonargparse
         pyyaml
@@ -168,9 +170,9 @@ in
       ''--prefix PATH ':' "${openssh}/bin"''
     ];
 
-    postInstall = ''
+    postInstall = lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
       installShellCompletion --cmd borg \
-        --fish scripts/shell_completions/fish/borg.fish
+        --fish <(HOME=$TMPDIR $out/bin/borg completion fish)
     '';
 
     doCheck = false;
