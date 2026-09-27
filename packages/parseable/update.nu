@@ -13,7 +13,7 @@ use ../../scripts/update.nu *
 use ../../scripts/nix-edit.nu *
 
 const REPO = "parseablehq/parseable"
-const BUNDLE = "https://parseable-prism-build.s3.us-east-2.amazonaws.com"
+const BUNDLE = "https://parseableprismbuild.blob.core.windows.net/parseable-prism-build"
 
 const VERSION = {attr: "version"}
 const SRC = {attr: "hash", under: [{bind: "src", call: "fetchFromGitHub"}]}
