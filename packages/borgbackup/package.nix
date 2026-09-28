@@ -75,14 +75,14 @@
 
   borgstore = python.pkgs.buildPythonPackage rec {
     pname = "borgstore";
-    version = "0.6.4";
+    version = "0.7.0";
     pyproject = true;
 
     src = fetchFromGitHub {
       owner = "borgbackup";
       repo = "borgstore";
       tag = version;
-      hash = "sha256-123ei6q1Jv6/CYZ1QSzgUQKxByjiGPIz0mqKbcZcAWE=";
+      hash = "sha256-14iWLlhKmj6oOftoK0Ma1FProN8UmLzjzPV+7kiy8Sw=";
     };
 
     env.SETUPTOOLS_SCM_PRETEND_VERSION = version;
@@ -110,14 +110,14 @@
 in
   python.pkgs.buildPythonApplication (finalAttrs: {
     pname = "borgbackup";
-    version = "2.0.0b24";
+    version = "2.0.0b25";
     pyproject = true;
 
     src = fetchFromGitHub {
       owner = "borgbackup";
       repo = "borg";
       tag = finalAttrs.version;
-      hash = "sha256-L+37gV06X7csT5yDFyJF5GCoMr00pvPLyDmdMA2dGtg=";
+      hash = "sha256-H1ePbqWsULvZvHXQiSBSxxkomsAOMuIUJUBhGbFzO8s=";
     };
 
     env.SETUPTOOLS_SCM_PRETEND_VERSION = finalAttrs.version;
