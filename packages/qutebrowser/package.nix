@@ -1,12 +1,12 @@
 {pkgs, ...}:
 pkgs.qutebrowser.overrideAttrs (oldAttrs: {
-  version = "3.7.0-unstable-2026-09-27";
+  version = "3.7.0-unstable-2026-09-28";
 
   src = pkgs.fetchFromGitHub {
     owner = "giodamelio";
     repo = "qutebrowser";
-    rev = "fd540ee985e3083c914e2a95c9d886e33cf7c223";
-    hash = "sha256-usGwf8Gms6t9lCQkdr5xaw5QwyJG1Pwk7fzafZFhctc=";
+    rev = "ceaf12742ea853448d61ea1f25be9b7483b20504";
+    hash = "sha256-ILo5eTq51mQE8BV6kMiguto9+J5+9SpOBBdCiQsfrtc=";
   };
 
   meta =
