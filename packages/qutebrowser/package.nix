@@ -5,8 +5,8 @@ pkgs.qutebrowser.overrideAttrs (oldAttrs: {
   src = pkgs.fetchFromGitHub {
     owner = "giodamelio";
     repo = "qutebrowser";
-    rev = "ce10ac2540d15b7022a8979997a93c7db4d2f9aa";
-    hash = "sha256-TiiLuLh+s1NyKwJxHG4bc6XRUjxu1PRRgsYIX9LEX6g=";
+    rev = "e94da1f92f2842ff9094c54fdb84266665c170cc";
+    hash = "sha256-mYAmu29+PT9oOic7khXIFDHVKii0dfQJD66BADkiNdQ=";
   };
 
   meta =
