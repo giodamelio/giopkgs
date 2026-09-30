@@ -5,7 +5,7 @@
 }:
 callPackage ./common.nix {} {
   pname = "crw";
-  version = "0.36.0";
+  version = "0.37.1";
 
   src = fetchFromGitHub {
     owner = "us";
