@@ -24,7 +24,7 @@ The user will typically provide a GitHub URL (e.g., `https://github.com/owner/re
 
 Given a GitHub URL or project name:
 
-1. Fetch the repo's main page to understand what it is
+1. Fetch the repo's main page to understand what it is, then fetch the source to read it (see below)
 2. Identify the **language and build system** — this determines which Nix builder to use:
    - **Go** → `buildGoModule` (look for `go.mod`)
    - **Rust** → `rustPlatform.buildRustPackage` (look for `Cargo.toml` / `Cargo.lock`)
@@ -38,6 +38,25 @@ Given a GitHub URL or project name:
 4. Identify the project's **license** — map it to a `lib.licenses.*` value
 5. Note any **native dependencies** (openssl, pkg-config, system libraries, etc.)
 6. For Rust workspace repos, identify which crate/subdir contains the target binary
+
+### Fetch sources with Nix
+
+To read a repository's source, prefetch it into the store rather than cloning it:
+
+```bash
+nix flake prefetch github:owner/repo --json          # default branch
+nix flake prefetch github:owner/repo/<tag> --json    # a specific tag or rev
+```
+
+`storePath` in the output is the unpacked tree, ready to browse. This works where a clone does not: `jj git clone --depth 1` fails on repositories whose tags point outside the shallow history. Add `--refresh` to bypass the cache and see the latest commit.
+
+To fetch a single file, such as a release `.deb` or tarball, use:
+
+```bash
+nix store prefetch-file --json --name <name.ext> <url>
+```
+
+It returns both `hash` (ready for `fetchurl`) and `storePath`, so you can unpack and inspect the artifact before writing the derivation. Pass `--name` when the URL has no meaningful filename, for example an opaque CDN asset id.
 
 ## Step 2: Write the derivation
 
@@ -204,55 +223,50 @@ Iterate until `nix build` succeeds. Then verify the binary works:
 
 ## Step 4: Set up auto-updates
 
-The repo has nightly auto-updates via GitHub Actions. For most packages, `nix-update` handles this automatically — no custom script needed.
+The nightly workflow runs `scripts/update-package.nu <name>` for every package. It picks the first of these that applies:
 
-### When nix-update works out of the box
-If the package uses a straightforward `version` + `fetchFromGitHub` with a standard tag format (like `v${version}`), `nix-update` can handle it. Test it:
+1. `packages/<name>/update.nu`, if it exists
+2. `passthru.updatePolicy` — `"skip"` for `overrideAttrs` wrappers that move with the flake inputs, `"branch"` for packages tracking a branch instead of releases
+3. `nix-update --flake <name>` otherwise
 
-```bash
-nix-update --flake <package-name>
-```
+**Never declare `passthru.updateScript`.** A path literal copies the script into the store on its own, away from its package directory, so relative imports break and the script silently never runs in CI. The dispatcher finds `update.nu` on disk instead.
 
-If this works (even as a noop showing "already up to date"), you're done — no custom update script needed.
+### Use nix-update when it can follow the release
 
-### When you need a custom update script
-You need a custom script if:
-- The version format is non-standard (e.g., includes git short hash, date-based)
-- The package has multiple hashes that need coordinated updates (e.g., `hashes.json`)
-- The tag format doesn't follow `v${version}` and `nix-update` can't figure it out
-- Post-update processing is needed (e.g., updating a vendored lock file)
+If the package has a literal `version` and a `fetchFromGitHub` whose tag is derived from it (like `v${version}`), `nix-update` handles it, including `cargoHash`, `vendorHash` and `npmDepsHash`. Add nothing; the dispatcher falls through to it.
 
-For custom scripts, add `passthru.updateScript = ./update.sh;` and create the script. Keep it simple — use `nix-update` as the base and add post-processing only if needed:
+### Write an update.nu when nix-update cannot
 
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
+You need `packages/<name>/update.nu` when:
 
-# Get the directory of this script
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+- The download URL cannot be derived from the version. Cap's `.deb` lives on a CDN under an opaque asset id that only appears in the release notes, so `cap-desktop/update.nu` parses it out of the release body.
+- Several hashes must move together, or a hash lives somewhere `nix-update` cannot see
+- The tag format is unusual, or only some releases belong to this package (Cap's repo filters on `cap-v*` tags)
+- `src` is wrapped (`applyPatches`), so `nix-update` would compute dependency hashes against a stale tree
 
-nix-update --flake <package-name>
+If the package started as `packages/<name>.nix`, move it to `packages/<name>/package.nix` first.
 
-# Any post-processing here
-```
+Follow the shape in CLAUDE.md, "Writing an update.nu": **compute everything, then write once**. Read the current version, return early if it matches upstream (this also skips large downloads every night), resolve every URL and hash, then edit `package.nix` with `nix-set` from `scripts/nix-edit.nu`. Honour `dry-run` by printing the result instead of saving. `packages/cap-desktop/update.nu` and `packages/tidewave-cli/update.nu` are short examples to copy.
 
-Make the script executable: `chmod +x packages/<name>/update.sh`
+Helpers from `scripts/update.nu` cover most needs: `gh-latest-release`, `gh-tags`, `fetch-text`, `prefetch-url` for single-file hashes, `nurl-hash` for GitHub sources, and `recover-hash` for vendored-dependency hashes. Use `die` for anything unexpected; never fall back silently.
 
-If the package started as a simple `.nix` file and now needs an update script, restructure it into a directory first.
+### Verify the update mechanism
 
-### Verify the update script
-
-After setting up updates, run the update mechanism once locally to confirm it works. Since the package was just created at the latest version, this should be a noop:
+Run it the way CI does, in dry-run mode. A package created at the latest version should report "already up to date":
 
 ```bash
-# If using nix-update directly (no custom script):
-nix-update --flake <package-name>
-
-# If using a custom update script:
-./packages/<name>/update.sh
+GIOPKGS_UPDATE_DRY_RUN=1 nu scripts/update-package.nu <name>
 ```
 
-Verify it exits cleanly and doesn't make unexpected changes.
+That early return means the resolving code never ran. To exercise it without editing the real script, run a copy with the version check disabled and confirm it reproduces the URL and hash already in `package.nix`:
+
+```bash
+sed 's/if $version == $current {/if false {/' packages/<name>/update.nu > packages/<name>/.update-test.nu
+GIOPKGS_UPDATE_DRY_RUN=1 nu packages/<name>/.update-test.nu
+rm packages/<name>/.update-test.nu
+```
+
+Adjust the `sed` pattern to match the script's own up-to-date check.
 
 ## Step 5: Format and lint
 
@@ -271,6 +285,6 @@ Fix any issues they flag.
 - [ ] Derivation builds successfully with `nix build .#<name>`
 - [ ] Binary runs (if applicable)
 - [ ] `nix flake check --no-build` passes
-- [ ] Auto-update mechanism works (nix-update or custom script runs clean)
+- [ ] `GIOPKGS_UPDATE_DRY_RUN=1 nu scripts/update-package.nu <name>` runs clean, and an `update.nu` reproduces the current hashes when forced
 - [ ] Code is formatted with alejandra
 - [ ] statix and deadnix report no issues
