@@ -206,7 +206,7 @@ use `[$FOO]`. `(...)` inside `$'...'` is a subexpression, so build regexes by co
 
 ## Overriding a nixpkgs package
 
-Wrapping a nixpkgs derivation with `overrideAttrs` is common here (`niri`, `waybar`,
+Wrapping a nixpkgs derivation with `overrideAttrs` is common here (`waybar`,
 `qutebrowser`, `netdata`, `parseable`). Two things that bite:
 
 - Overriding `src` on a Rust package invalidates `cargoHash`, which is resolved against the final
