@@ -4,10 +4,10 @@
   appimageTools,
   fetchurl,
 }: let
-  version = "1.6.0";
+  version = "1.7.0";
 
-  x86_64Hash = "sha256-voUTZWuFSZmhJkqDjEHsIaLiAbdjizBoaS2TjIuayQ0=";
-  aarch64Hash = "sha256-FQR2qEj7y2ZlCI24jVY27AG3XOd2cJrM5JARxufXCDc=";
+  x86_64Hash = "sha256-E+AwWMPqDw8OFqVicqg3niCjwVb57qHRLaHPCAh4AzY=";
+  aarch64Hash = "sha256-jqjtrlOYgZCgOfmZrCOrQKIqfdICUIPfWfn6b3iXjVg=";
 
   images = {
     x86_64-linux = {
