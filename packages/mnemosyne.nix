@@ -69,14 +69,14 @@
 in
   python.pkgs.buildPythonApplication rec {
     pname = "mnemosyne";
-    version = "4.0.0b3";
+    version = "4.0.0b4";
     pyproject = true;
 
     src = fetchFromGitHub {
       owner = "mnemosyne-oss";
       repo = "mnemosyne";
       tag = "v${version}";
-      hash = "sha256-gdPJtziCgnOOEpBsL2MjsTFQ8pukTjvGeDW1CXCg0eU=";
+      hash = "sha256-mJgttjiC/c0jt17dBWhVp4/H229GgbInUQm6maXFTmA=";
     };
 
     build-system = [python.pkgs.setuptools];
