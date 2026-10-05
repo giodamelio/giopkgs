@@ -5,14 +5,14 @@
   rustPlatform,
   ...
 }: let
-  version = "0.45.1-unstable-2026-10-01";
-  rev = "0cb02a837f28459cd698734264c9fcd3712ec0d1";
+  version = "0.45.1-unstable-2026-10-04";
+  rev = "4df526513289fdee58eb7e8351c2ff87aac099ff";
 
   src = fetchFromGitHub {
     owner = "jj-vcs";
     repo = "jj";
     inherit rev;
-    hash = "sha256-kSBpuKCKe9ngof2wFWTJ0zy3spStHUQqIWeMurZaNsc=";
+    hash = "sha256-qMAj22iUXXvzZKX+pxGi7U/BzIm5jr1+AIZjWtAIV9k=";
   };
 in
   jujutsu.overrideAttrs (old: {
@@ -20,7 +20,7 @@ in
 
     cargoDeps = rustPlatform.fetchCargoVendor {
       inherit src;
-      hash = "sha256-Hv/cHlbpo41uhVHDxkI7tURfDjjBnxbjx7hzsnESCSw=";
+      hash = "sha256-BuV30ByFZS+EArlBWh9uNc9vO3NENP4DHFCs04W3svI=";
     };
 
     patches =
