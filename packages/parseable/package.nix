@@ -5,13 +5,13 @@
   rustPlatform,
   ...
 }: let
-  version = "3.2.3";
+  version = "3.2.4";
 
   src = fetchFromGitHub {
     owner = "parseablehq";
     repo = "parseable";
     tag = "v${version}";
-    hash = "sha256-8ku0ZJjznOiF9FGCJ5pfGEuZ0rWcWXkOmUrC1IrGgAo=";
+    hash = "sha256-Ng0Q+JXkTuvCGKgi5jATIt8vJqemcqJ59KfgJwSb3Lw=";
   };
 in
   parseable.overrideAttrs (oldAttrs: {
@@ -19,7 +19,7 @@ in
 
     cargoDeps = rustPlatform.fetchCargoVendor {
       inherit src;
-      hash = "sha256-cz9krJf8EGJj1vW35dNpx01Dd0UFVSInb4/FD7Ab9MI=";
+      hash = "sha256-OijNc2b47yTkcCkuYEm5Rr4D1p10inSbbsvLQvoJoxY=";
     };
 
     env =
