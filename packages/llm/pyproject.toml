@@ -1,0 +1,19 @@
+[project]
+name = "llm-env"
+version = "0.0.0"
+requires-python = ">=3.12"
+dependencies = [
+  "llm",
+  "llm-anthropic",
+  "llm-gemini",
+  "llm-openrouter",
+  "llm-deepseek",
+  "llm-ollama",
+  "llm-tools-datasette",
+  "llm-tools-sqlite",
+  "llm-templates-github",
+  "llm-fragments-github",
+]
+
+[tool.uv]
+package = false

@@ -3,12 +3,36 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+
+    pyproject-nix = {
+      url = "github:pyproject-nix/pyproject.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    uv2nix = {
+      url = "github:pyproject-nix/uv2nix";
+      inputs.pyproject-nix.follows = "pyproject-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    pyproject-build-systems = {
+      url = "github:pyproject-nix/build-system-pkgs";
+      inputs.pyproject-nix.follows = "pyproject-nix";
+      inputs.uv2nix.follows = "uv2nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
     self,
     nixpkgs,
+    pyproject-nix,
+    uv2nix,
+    pyproject-build-systems,
   }: let
+    # Flake inputs that packages can take as callPackage arguments, alongside pkgs.
+    packageInputs = {inherit pyproject-nix uv2nix pyproject-build-systems;};
+
     forAllSystems = function:
       nixpkgs.lib.genAttrs [
         "x86_64-linux"
@@ -42,7 +66,7 @@
     packages = forAllSystems (
       pkgs:
         nixpkgs.lib.filesystem.packagesFromDirectoryRecursive {
-          inherit (pkgs) callPackage;
+          callPackage = pkgs.newScope packageInputs;
           directory = ./packages;
         }
     );
@@ -54,7 +78,7 @@
 
     overlays.default = final: _prev:
       nixpkgs.lib.filesystem.packagesFromDirectoryRecursive {
-        inherit (final) callPackage;
+        callPackage = final.newScope packageInputs;
         directory = ./packages;
       };
 
@@ -72,6 +96,7 @@
         gh
         curl
         python3 # borgbackup/sync-deps.py
+        uv # llm is built from a uv.lock
       ];
     in {
       update = pkgs.mkShell {buildInputs = updateTools;};
