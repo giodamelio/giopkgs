@@ -24,6 +24,9 @@ in
       (oldAttrs.passthru or {})
       // {
         updatePolicy = "skip";
+        # all-terminfo is nixosTests.allTerminfo, which builds stock nixpkgs
+        # terminfo packages and never exercises this override.
+        tests = removeAttrs (oldAttrs.passthru.tests or {}) ["all-terminfo"];
       };
 
     meta =
