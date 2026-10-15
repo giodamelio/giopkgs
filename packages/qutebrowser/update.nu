@@ -9,7 +9,8 @@ use ../../scripts/nix-edit.nu *
 
 const REPO = "giodamelio/qutebrowser"
 
-const VERSION = {attr: "version"}
+# frizbee's derivation has its own `version`; the fork's is the one beside its src.
+const VERSION = {attr: "version", under: [{kind: "attrset_expression"}], ident: {owner: "giodamelio"}}
 const REV = {attr: "rev"}
 
 def main [] {
