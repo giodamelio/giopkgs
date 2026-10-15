@@ -25,18 +25,25 @@ def summary [text: string] {
   $"($text)(char nl)" | save --append ($env.GITHUB_STEP_SUMMARY? | default "/dev/null")
 }
 
+# Streams stderr as it arrives so long updates show progress, while still
+# capturing it for the failure summary. The tee must stay inside the same
+# pipeline as `complete`: piped through a custom command, stderr never reaches it.
+def run-live [cmd: closure]: nothing -> record {
+  do $cmd | tee -e { lines | each {|l| print -e $l; null} | ignore } | complete
+}
+
 def dispatch [package: string]: nothing -> record {
   let nu_script = $"packages/($package)/update.nu"
   let sh_script = $"packages/($package)/update.sh"
 
   if ($nu_script | path exists) {
     print $"Running ($nu_script)"
-    return (with-env {UPDATE_NIX_ATTR_PATH: $package} { ^nu $nu_script | complete })
+    return (with-env {UPDATE_NIX_ATTR_PATH: $package} { run-live { ^nu $nu_script } })
   }
 
   if ($sh_script | path exists) {
     print $"Running ($sh_script)"
-    return (with-env {UPDATE_NIX_ATTR_PATH: $package} { ^bash $sh_script | complete })
+    return (with-env {UPDATE_NIX_ATTR_PATH: $package} { run-live { ^bash $sh_script } })
   }
 
   match (nix-eval-or $"($package).passthru.updatePolicy" "") {
@@ -48,15 +55,15 @@ def dispatch [package: string]: nothing -> record {
       let branch = (nix-eval-or $"($package).passthru.updateBranch" "")
       if $branch == "" {
         print $"Updating ($package) from its default branch"
-        ^nix-update --flake --version=branch $package | complete
+        run-live { ^nix-update --flake --version=branch $package }
       } else {
         print $"Updating ($package) from branch ($branch)"
-        ^nix-update --flake $"--version=branch=($branch)" $package | complete
+        run-live { ^nix-update --flake $"--version=branch=($branch)" $package }
       }
     }
     _ => {
       print $"Updating ($package) with nix-update"
-      ^nix-update --flake $package | complete
+      run-live { ^nix-update --flake $package }
     }
   }
 }
@@ -66,7 +73,6 @@ def main [package: string] {
   let result = (dispatch $package)
 
   if ($result.stdout | is-not-empty) { print $result.stdout }
-  if ($result.stderr | is-not-empty) { print -e $result.stderr }
 
   let new = (nix-eval-or $"($package).version" "unknown")
   let status = if $result.exit_code != 0 {
