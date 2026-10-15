@@ -31,11 +31,13 @@ def main [] {
         null
       } else {
         let asset = ($matches | first)
+        let url = $asset.browser_download_url
         info $"prefetching ($entry.system)"
-        {
-          system: $entry.system
-          value: {url: $asset.browser_download_url, hash: (prefetch-url $asset.browser_download_url --unpack)}
-        }
+        # Not prefetch-url --unpack: the zip holds UTF-8 font names (Hiragino),
+        # which nix's in-process libarchive rejects under its C locale. fetchzip
+        # unpacks with unzip in a builder and copes.
+        let hash = (recover-hash $'pkgs.fetchzip {url = "($url)"; hash = ""; stripRoot = false;}')
+        {system: $entry.system, value: {url: $url, hash: $hash}}
       }
     }
     | compact
