@@ -3,6 +3,7 @@
   stdenv,
   fetchFromGitHub,
   fetchPypi,
+  dart-sass,
   node-gyp,
   nodejs,
   gettext,
@@ -29,13 +30,13 @@
   # fetcherVersion 3 is rejected for pnpm >= 11; upstream nixpkgs pins pnpm_10 too.
   pnpm = pnpm_10;
 
-  version = "3.2.1-unstable-2026-09-23";
+  version = "3.3.1-unstable-2026-10-12";
 
   src = fetchFromGitHub {
     owner = "paperless-ngx";
     repo = "paperless-ngx";
-    rev = "c63afb47b27951cb6c61e68b6d77a5fd0eedd686";
-    hash = "sha256-NlFm1gWp1Q3Ui9Nn8GP+xZY0QLmBvlEViZ+L+rUHWKw=";
+    rev = "2b00cf6a954dfb40290a8939dbbaf29e0e3fe31a";
+    hash = "sha256-euhYcS7SqCq+zhTGSGMRte9KSw2j0nIEAad+Kbb98m0=";
   };
 
   python = python3.override {
@@ -107,7 +108,7 @@
       inherit pnpm;
       inherit (finalAttrs) pname version src;
       fetcherVersion = 3;
-      hash = "sha256-jID478Cgv3+8qfLvPVT+9QzkXlxCBjBtviIWLNBaC5o=";
+      hash = "sha256-AMUoAogM5MS5luatvhV96/Y4Qr/NRj30vCnWO58hOME=";
     };
 
     nativeBuildInputs =
@@ -143,6 +144,10 @@
         node-gyp rebuild
         popd
       fi
+
+      # The bundled dart binary is dynamically linked against an FHS loader.
+      substituteInPlace node_modules/.pnpm/sass-embedded@*/node_modules/sass-embedded/dist/lib/src/compiler-path.js \
+        --replace-fail 'compilerCommand = (() => {' 'compilerCommand = (() => { return ["${lib.getExe dart-sass}"];'
 
       # cat forcefully disables angular cli's spinner which doesn't work with nix' tty which is 0x0
       pnpm run build --configuration production | cat
