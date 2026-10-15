@@ -22,13 +22,17 @@ runCommand "tlbx-startup-test" {
     exit 1
   fi
 
+  # Since 10.19, mt answers every request with a 503 until a password is set.
+  # With one set, / redirects to the login page, hence curl -L below.
+  echo startup-test-password | mt --set-password
+
   mt --port 28080 --bind 127.0.0.1 > server.log 2>&1 &
   server=$!
   trap 'kill $server 2>/dev/null' EXIT
 
   ready=
   for _ in $(seq 1 60); do
-    if curl -sk --fail -o index.html https://127.0.0.1:28080/; then
+    if curl -skL --fail -o index.html https://127.0.0.1:28080/; then
       ready=1
       break
     fi
