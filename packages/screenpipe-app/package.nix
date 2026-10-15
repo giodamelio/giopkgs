@@ -36,13 +36,13 @@
   # Node/frontend build
   cacert,
 }: let
-  version = "app-v2.7.97";
+  version = "app-v2.7.109";
 
   src = fetchFromGitHub {
     owner = "screenpipe";
     repo = "screenpipe";
     tag = version;
-    hash = "sha256-sp6Cn99vJFAzIwUF3HueT0HHOlmgh/WhXv1Hwn/7z1I=";
+    hash = "sha256-9AoekhskTZeE9P68bIrutwzOCGPu+bES0uVTw7e3kxE=";
   };
 
   # Build the Next.js frontend first
@@ -72,7 +72,7 @@
 
     outputHashMode = "recursive";
     outputHashAlgo = "sha256";
-    outputHash = "sha256-YY5ql2sOdNeCF6gfl5Hm3/rgOUJ6QL8hMFoKlvx2IWs=";
+    outputHash = "sha256-+hRDNBu7VL1WbCDHi1Y0vRh2EQXsrhvDNmIE+JO2v24=";
   };
 in
   rustPlatform.buildRustPackage {
@@ -85,7 +85,7 @@ in
         root = ./.;
         fileset = ./Cargo.lock;
       };
-      hash = "sha256-czLJiRPa1W5/wJgfRUkjPtmkhdyXJDDIPh86bw0Gzrw=";
+      hash = "sha256-2iK4cE/w0c58T62SD2YufQnm7zyzIrCUUM+wmr4WIRQ=";
     };
 
     # The Tauri app crate is at apps/screenpipe-app-tauri/src-tauri
