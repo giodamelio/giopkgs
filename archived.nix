@@ -20,4 +20,7 @@
   # solidtime = "stopped self-hosting it, 2026-05";
 
   pounce-apk = "fixed-output Android build: ~7 min, needs the network, and its hash moves whenever an upstream Maven artifact does — build it on demand, 2026-08";
+
+  screenpipe-app = "no longer used, and an expensive CI build, 2026-10";
+  screenpipe-cli = "no longer used, and an expensive CI build, 2026-10";
 }
