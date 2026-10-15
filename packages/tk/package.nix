@@ -5,16 +5,16 @@
 }:
 buildGoModule rec {
   pname = "tk";
-  version = "0-unstable-2026-10-06";
+  version = "0-unstable-2026-10-15";
 
   src = fetchFromGitHub {
     owner = "h2oai";
     repo = "tk";
-    rev = "563626266323616f5bc488630b3cdc41320a6ff3";
-    hash = "sha256-oBx9VjQOuKovqZ+X7JPAPVQyLxZzvgeUt5QCGwEEWXw=";
+    rev = "b0720d89805ea9347f99586178197428ab5486ac";
+    hash = "sha256-7NtUysV1uHms/PNrLZFkynZOPHbnr88yWXrlsjavDzg=";
   };
 
-  vendorHash = "sha256-ao08hQZ6IpM4JUzBfQ6dMUFTYu14DQHJvI0HCBgG6PE=";
+  vendorHash = "sha256-dUswAHBnOusQsYxI6ImYmGRj1HdaVye+JndfofeYLjs=";
 
   ldflags = [
     "-s"
