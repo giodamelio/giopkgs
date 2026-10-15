@@ -22,25 +22,46 @@ def ee-url [version: string]: nothing -> string {
 
 def main [] {
   let file = (pkg-file)
+  let current = (open --raw $file | nix-read $VERSION)
+  info $"current version: ($current)"
 
+  info $"looking up the latest stable tag of ($REPO)"
   # Release candidates are tagged alongside stable releases, and sort ahead of
   # them — v1.0.0-rc1 is the first tag while v0.92.2 is the newest release.
   let tag = (gh-tags $REPO --match '^v\d+\.\d+\.\d+$' | first)
   let version = ($tag | str replace -r '^v' '')
   info $"latest tag: ($tag)"
 
-  info "computing hashes"
-  let src_hash = (nurl-hash $"https://github.com/($REPO)" $tag)
-  let ee_hash = (prefetch-url (ee-url $version))
+  info $"comparing ($current) with ($version)"
+  if $version == $current {
+    info "already up to date, nothing to do"
+    return
+  }
 
+  info $"update available: ($current) -> ($version)"
+
+  info $"hashing source at ($tag)"
+  let src_hash = (nurl-hash $"https://github.com/($REPO)" $tag)
+  info $"  source: ($src_hash)"
+
+  info "hashing enterprise tarball"
+  let ee_hash = (prefetch-url (ee-url $version))
+  info $"  enterprise: ($ee_hash)"
+
+  info "fetching web/package-lock.json"
   let lock = (mktemp -d | path join "package-lock.json")
   (fetch-text $"https://raw.githubusercontent.com/($REPO)/($tag)/web/package-lock.json"
     | save -f $lock)
+  info "prefetching npm dependencies"
   let npm_hash = (prefetch-npm $lock)
+  info $"  npmDepsHash: ($npm_hash)"
+
+  info "vendoring cargo dependencies to recover cargoHash"
 
   let cargo_hash = (recover-hash $'
   let src = pkgs.fetchFromGitHub {owner = "openobserve"; repo = "openobserve"; tag = "($tag)"; hash = "($src_hash)";};
   in pkgs.rustPlatform.fetchCargoVendor {inherit src; hash = "";}')
+  info $"  cargoHash: ($cargo_hash)"
 
   let updated = (
     open --raw $file
@@ -57,9 +78,9 @@ def main [] {
     return
   }
 
-  with-rollback [$file] {
-    $updated | save -f $file
-    nix-build (attr)
-  }
-  info $"updated to ($version)"
+  # No verification build: the web crate exhausts the CI runner's memory, so the
+  # build is left to the Build Packages workflow.
+  info $"writing (($file | path basename))"
+  $updated | save -f $file
+  info $"($current) -> ($version)"
 }
