@@ -5,16 +5,16 @@
 }:
 rustPlatform.buildRustPackage rec {
   pname = "opentunnel";
-  version = "0.5.1";
+  version = "0.5.2";
 
   src = fetchFromGitHub {
     owner = "anomalyco";
     repo = "opentunnel";
     tag = "v${version}";
-    hash = "sha256-BraKOWlJVGbqPYV+EOiIklr7NM4ULuRCtUSzgwPt6Oc=";
+    hash = "sha256-tDrfQXE1JVrYqo/lYmxXOKDVO+LnkevJnHsVUQGLTno=";
   };
 
-  cargoHash = "sha256-uXPn4jmxp1fhZN4K1a6rchQynQnht2CPrUEU6mTLqkM=";
+  cargoHash = "sha256-2bnhoktH2qbtHpR6Kh6ag0qLYe3W1vESPCx8L3urPl4=";
 
   cargoBuildFlags = ["-p" "opentunnel-cli"];
   cargoTestFlags = ["-p" "opentunnel-cli" "-p" "opentunnel"];
