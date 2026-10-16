@@ -18,7 +18,7 @@
   # Enterprise Edition ships only as a prebuilt binary
   enableEnterprise ? false,
 }: let
-  version = "1.1.0";
+  version = "1.1.1";
 
   commonMeta = {
     description = "Cloud-native observability platform built specifically for logs, metrics, traces, analytics & realtime user-monitoring";
@@ -36,7 +36,7 @@ in
 
       src = fetchurl {
         url = "https://downloads.openobserve.ai/releases/o2-enterprise/v${finalAttrs.version}/openobserve-ee-v${finalAttrs.version}-linux-amd64-musl.tar.gz";
-        hash = "sha256-a9BG5dzefTr0Ed/8PcTx7+jucI/hU7oHX54AK+5pSEY=";
+        hash = "sha256-BM/HL1E6hznTusijlCYpo0ko0J4ajPRisAgps+3NOXA=";
       };
 
       # The tarball is a single flat `openobserve` binary.
@@ -130,7 +130,7 @@ in
         owner = "openobserve";
         repo = "openobserve";
         tag = "v${version}";
-        hash = "sha256-cNyqJZZVdUCWPSRIviODuXBw/No+2PSZe90Fu+DJ4O8=";
+        hash = "sha256-NGmIhKMmMHbr6P3ufTtUwlS9hjajL2Od0cUfUrS7sMc=";
       };
 
       patches = [
@@ -147,7 +147,7 @@ in
         cp -r ${web}/share/openobserve-ui web/dist
       '';
 
-      cargoHash = "sha256-iZZIjAdLseo6lOaaDI/NjUfGEyAxxcsiFEllNJ1wnkU=";
+      cargoHash = "sha256-unWuuJv3XaDzgpDYt1CuNOGtxNJwQCxDO3UA6TE9/Zo=";
 
       nativeBuildInputs = [
         pkg-config
