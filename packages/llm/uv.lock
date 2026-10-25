@@ -461,16 +461,16 @@ wheels = [
 
 [[package]]
 name = "llm-ollama"
-version = "0.19.0"
+version = "0.19.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "llm" },
     { name = "ollama" },
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/32/4d/77dd048d1c09129043c9ce7a627dc73baf2c637b2b8d040410da70fe4b3c/llm_ollama-0.19.0.tar.gz", hash = "sha256:97dddf369a47457709f66334c0656ce1f5c561e631fc01a42a146afe42722b1e", size = 28119, upload-time = "2026-10-23T12:09:12.473Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b1/b9/b4b84696df4320770caf3eb5075881b9df525273926dce15f14e647b45b9/llm_ollama-0.19.1.tar.gz", hash = "sha256:3321de1b546d472e7b21709d8384ebce60ca484dd37c5aa71380abab73549fc7", size = 28191, upload-time = "2026-10-25T13:35:33.512Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e4/6e/1210d6395c159603a08ac958e7cea31755c02461b80d09ad9ccd13a91c57/llm_ollama-0.19.0-py3-none-any.whl", hash = "sha256:e61abd335aeb7e38ad0b4f0cfd56eece9a0643bd303e97823fd7787b0521b01a", size = 25377, upload-time = "2026-10-23T12:09:11.003Z" },
+    { url = "https://files.pythonhosted.org/packages/3b/3d/627003cbf9829aa705cbcf6d9c21f7f1f8c5c456a93b048f0e74891a2525/llm_ollama-0.19.1-py3-none-any.whl", hash = "sha256:1a316a0f93c2d69dce6ff53e67d078dc8695e3dcc331b0dea85fb0bc7764ece6", size = 25392, upload-time = "2026-10-25T13:35:32.074Z" },
 ]
 
 [[package]]
