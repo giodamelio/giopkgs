@@ -7,7 +7,6 @@
   chromium,
   autoPatchelfHook,
   stdenv,
-  makeWrapper,
 }: let
   python = python3.override {
     self = python;
@@ -91,19 +90,23 @@
 
       browser-use-sdk = prev.buildPythonPackage rec {
         pname = "browser-use-sdk";
-        version = "3.4.3";
+        version = "3.12.1";
         pyproject = true;
 
         src = fetchPypi {
           pname = "browser_use_sdk";
           inherit version;
-          hash = "sha256-uuJpwqKPcuXO0bl/Hrx+lL/AGM6yzmO1qZg4RAyk4tE=";
+          hash = "sha256-lMKocOXsUHKyFmGm9P7L8QbavhxA6HkMZwIIHFLznS8=";
         };
 
         build-system = [prev.hatchling];
 
+        # Upstream wants idna>=3.19; nixpkgs is a patch release behind.
+        pythonRelaxDeps = ["idna"];
+
         dependencies = with prev; [
           httpx
+          idna
           pydantic
         ];
 
@@ -115,6 +118,74 @@
           license = lib.licenses.mit;
         };
       };
+
+      fetch-use = prev.buildPythonPackage rec {
+        pname = "fetch-use";
+        version = "0.4.0";
+        pyproject = true;
+
+        src = fetchPypi {
+          pname = "fetch_use";
+          inherit version;
+          hash = "sha256-lRGYfUkH7G2sUB4h1mlG0QCY9mtdIbwqukGJzYG6GJo=";
+        };
+
+        build-system = [prev.hatchling];
+
+        doCheck = false;
+
+        meta = {
+          description = "Python client for the Browser Use Fetch HTTP service";
+          homepage = "https://github.com/browser-use/fetch-use";
+          license = lib.licenses.mit;
+        };
+      };
+
+      browser-harness = prev.buildPythonPackage rec {
+        pname = "browser-harness";
+        version = "0.1.13";
+        pyproject = true;
+
+        src = fetchPypi {
+          pname = "browser_harness";
+          inherit version;
+          hash = "sha256-KE3FR6BCwwn+r9mp9KdLKoZRt5Y+o6xssvLWSIn2qPM=";
+        };
+
+        # The build backend is pinned to an exact setuptools release.
+        postPatch = ''
+          substituteInPlace pyproject.toml \
+            --replace-fail '"setuptools==84.0.0"' '"setuptools"'
+        '';
+
+        build-system = [prev.setuptools];
+
+        pythonRelaxDeps = true;
+
+        dependencies = with prev; [
+          _final.cdp-use
+          _final.fetch-use
+          pillow
+          websockets
+        ];
+
+        doCheck = false;
+
+        pythonImportsCheck = ["browser_harness"];
+
+        meta = {
+          description = "Thin harness for driving a real browser from an agent over CDP";
+          homepage = "https://github.com/browser-use/browser-harness";
+          license = lib.licenses.mit;
+        };
+      };
+
+      # nixpkgs marks posthog broken once mcp reaches 2, but mcp is only one of
+      # its test inputs; the library itself never imports it.
+      posthog = prev.posthog.overridePythonAttrs (old: {
+        doCheck = false;
+        meta = old.meta // {broken = false;};
+      });
     };
   };
 
@@ -155,6 +226,7 @@
     posthog
     psutil
     pydantic
+    pydantic-settings
     python-dotenv
     requests
     screeninfo
@@ -178,6 +250,7 @@
     markdownify
     python-docx
     browser-use-sdk
+    browser-harness
   ];
 in
   python.pkgs.buildPythonApplication rec {
@@ -188,13 +261,11 @@ in
     src = fetchFromGitHub {
       owner = "browser-use";
       repo = "browser-use";
-      tag = "0.12.6";
-      hash = "sha256-hX5pmOmmDN6KL+jqkV1b/hQ2tmauCnHZec00vQXnWyI=";
+      tag = version;
+      hash = "sha256-HrAxu6t//HIQmoeCkuwBZHUWWZayWD1SLcrSl6Od0Ps=";
     };
 
     build-system = [python.pkgs.hatchling];
-
-    nativeBuildInputs = [makeWrapper];
 
     pythonRelaxDeps = true;
 
@@ -206,12 +277,9 @@ in
     dependencies = deps;
 
     postPatch = ''
-      # Patch profile-use to look for the binary on PATH instead of
-      # only in ~/.browser-use/bin/
-      substituteInPlace browser_use/skill_cli/profile_use.py \
-        --replace-fail \
-          "binary = get_bin_dir() / ('profile-use.exe' if sys.platform == 'win32' else 'profile-use')" \
-          "binary = Path(shutil.which('profile-use') or (get_bin_dir() / 'profile-use'))"
+      # The build backend is pinned to an exact hatchling release.
+      substituteInPlace pyproject.toml \
+        --replace-fail '"hatchling==1.32.0"' '"hatchling"'
 
       # Add Nix chromium path to browser discovery so the watchdog finds it
       # without needing /usr/bin or Playwright downloads
@@ -229,18 +297,26 @@ in
           "default=False, description='Whether to enable Chromium sandboxing (disabled on NixOS).'"
     '';
 
-    # Set PYTHONPATH so the daemon subprocess (spawned via sys.executable)
+    # Set PYTHONPATH so the browser-harness daemon (spawned via sys.executable)
     # can find browser_use and all dependencies. The Nix wrapper sets up
     # site-packages via site.addsitedir in the wrapper script, but that
     # only affects the main process — the daemon subprocess uses the raw
     # Python interpreter and needs PYTHONPATH inherited from the environment.
-    postFixup = ''
-      wrapProgram $out/bin/browser-use \
-        --prefix PATH : ${lib.makeBinPath [chromium profile-use]} \
-        --set PYTHONPATH "$out/${python.sitePackages}:${python.pkgs.makePythonPath deps}"
-    '';
+    # browser-harness also runs profile-use and the browser from PATH. These
+    # apply to every entry point, not just bin/browser-use.
+    makeWrapperArgs = [
+      "--prefix"
+      "PATH"
+      ":"
+      (lib.makeBinPath [chromium profile-use])
+      "--set"
+      "PYTHONPATH"
+      "${placeholder "out"}/${python.sitePackages}:${python.pkgs.makePythonPath deps}"
+    ];
 
     doCheck = false;
+
+    pythonImportsCheck = ["browser_use" "browser_use.cli" "browser_harness"];
 
     passthru = {
       inherit profile-use;
