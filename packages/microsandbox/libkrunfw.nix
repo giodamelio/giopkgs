@@ -18,7 +18,7 @@ in
     src = fetchFromGitHub {
       owner = "superradcompany";
       repo = "libkrunfw";
-      rev = "70ff1e821a7b513adb391aef6ad538f6ce148c17";
+      rev = "56bf194627a07996dc4ce21211fe86ada4c76080";
       hash = "sha256-ukrmizk+OqxydWsP4JZiEzgZtLpSjDLGo4pspusfyuk=";
     };
 
