@@ -36,16 +36,16 @@
 in
   rustPlatform.buildRustPackage rec {
     pname = "fluree";
-    version = "4.2.4";
+    version = "4.2.5";
 
     src = fetchFromGitHub {
       owner = "fluree";
       repo = "db";
       tag = "v${version}";
-      hash = "sha256-pLDfbc15vQy14fEF7MyjNJlh1m0g9o//v9VzsA0X4Ok=";
+      hash = "sha256-ssjXS+wweOpVvsC+TbHKKmO99J1uF9tedpHHQ/w/D+4=";
     };
 
-    cargoHash = "sha256-0GmM1bmRhQBkusmbdQ+rew+Ecot7xRWVe7e3J4aTjFY=";
+    cargoHash = "sha256-d5QearQzLnVQbtfic2sRZP91j7szOdyYq4YhniWzPXQ=";
 
     # The workspace holds 44 crates; only fluree-db-cli produces a shipped
     # binary. Its default `server` feature links fluree-db-server in as a
