@@ -7,7 +7,7 @@
   glib-networking,
   writeText,
 }: let
-  version = "1.4.13";
+  version = "1.4.34";
 
   # The host's pipewire ALSA plugin is built against the *system* alsa-lib, and
   # this flake's nixpkgs ships a different one (1.2.16.1 vs 1.2.15.3), so
@@ -20,8 +20,8 @@
     ctl.!default { type pulse }
   '';
 
-  x86_64Hash = "sha256-2CIGQ9q0UDuv2xCPZdV1qTvSZT0n9f8N7JkDkzPucmg=";
-  aarch64Hash = "sha256-axJcX1m1BRL8c22IHY2MluMMYdQTQngs9bdC1ab+Svc=";
+  x86_64Hash = "sha256-1wz9G90la4HUUOJI4uzD06ckdAoYfBG8vR0iqS0qf+o=";
+  aarch64Hash = "sha256-pgNyAc3fzXF++GXJQ+Fig5mKGz2a4JIxVvoIeULe07Y=";
 
   images = {
     x86_64-linux = {
@@ -62,6 +62,7 @@ in
         libpulseaudio
         libsoup_3
         openssl
+        pipewire
         webkitgtk_4_1
       ];
 
@@ -77,7 +78,7 @@ in
       cp -r ${contents}/usr/share/icons $out/share/icons
     '';
 
-    # The release tag is `desktop_v1.4.13`, and both arch hashes move together.
+    # The release tag is `desktop_v1.4.34`, and both arch hashes move together.
     passthru.updatePolicy = "skip";
 
     meta = {
