@@ -5,7 +5,7 @@
   fetchurl,
 }: let
   # Must match KERNEL_VERSION in the fork's Makefile, which names the tarball.
-  kernelVersion = "6.12.113";
+  kernelVersion = "6.12.115";
 in
   # microsandbox pins its own libkrunfw fork as the vendor/libkrunfw submodule
   # and resolves `libkrunfw.so.<LIBKRUNFW_VERSION>` by exact filename, so the
@@ -18,13 +18,13 @@ in
     src = fetchFromGitHub {
       owner = "superradcompany";
       repo = "libkrunfw";
-      rev = "56bf194627a07996dc4ce21211fe86ada4c76080";
-      hash = "sha256-ukrmizk+OqxydWsP4JZiEzgZtLpSjDLGo4pspusfyuk=";
+      rev = "223f11693774646eaa8ba892e3a6ebd07653154b";
+      hash = "sha256-9L7wMJpV1c6CV6jOPBWxXiwDU8GhkSRtynDLgHkqSW8=";
     };
 
     kernelSrc = fetchurl {
       url = "mirror://kernel/linux/kernel/v${lib.versions.major kernelVersion}.x/linux-${kernelVersion}.tar.xz";
-      hash = "sha256-4JtnJ+XFISU/DUFpSQC5w4+3YE2301I4qBl6qffeJCg=";
+      hash = "sha256-DskP5LIEIrG2ZLd+bS3eIrQL1B5+ssrYrIc5pHScsbs=";
     };
 
     postPatch = ''
