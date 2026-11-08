@@ -7,11 +7,11 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "anytype-mcp";
-  version = "2.0.1";
+  version = "2.0.2";
 
   src = fetchurl {
     url = "https://registry.npmjs.org/@anyproto/anytype-mcp/-/anytype-mcp-${finalAttrs.version}.tgz";
-    hash = "sha256-DnsrX5DS0/aUQ/jU59+FcJHEbkt4ob3sSNEqEjnInzI=";
+    hash = "sha256-3/MgkblYXhe6wgiBu1S7QSgTk512Rg17XmOJ6v/Jj2E=";
   };
 
   nativeBuildInputs = [makeWrapper];
