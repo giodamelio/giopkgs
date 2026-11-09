@@ -1,14 +1,14 @@
 {
-  "version": "10.26.32-dev",
-  "tag": "v10.26.32-dev",
+  "version": "10.26.45-dev",
+  "tag": "v10.26.45-dev",
   "assets": {
     "x86_64-linux": {
-      "url": "https://github.com/tlbx-ai/tlbx/releases/download/v10.26.32-dev/mt-linux-x64.tar.gz",
-      "hash": "sha256-KbYk3AoSj9IM7EkrVEq0fqkj0FQI5FiAEc148jP4Y4E="
+      "url": "https://github.com/tlbx-ai/tlbx/releases/download/v10.26.45-dev/mt-linux-x64.tar.gz",
+      "hash": "sha256-PGxkscnVDA8tOfd3n9NzqV1RcsnhoInhQ4JgKe/uEfs="
     },
     "aarch64-linux": {
-      "url": "https://github.com/tlbx-ai/tlbx/releases/download/v10.26.32-dev/mt-linux-arm64.tar.gz",
-      "hash": "sha256-PqddSpqh7u2HNSjPQZZgEtEQCA5gRWdrLOjlbEC161s="
+      "url": "https://github.com/tlbx-ai/tlbx/releases/download/v10.26.45-dev/mt-linux-arm64.tar.gz",
+      "hash": "sha256-9AudlT2mTJn5shdzOjsDAd2HB2Gg6npPQ4UJG1+XmiU="
     }
   }
 }
