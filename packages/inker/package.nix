@@ -89,7 +89,7 @@
     npmDeps = fetchNpmDeps {
       name = "${pname}-frontend-npm-deps";
       src = lockDir ./frontend-package-lock.json;
-      hash = "sha256-SES7dQQedDx5cjJXFLInmJwGTze4T/Nn3vM6QTjFnX8=";
+      hash = "sha256-GcdLq6QLlrcSOVjbUzPiqf7qCh0eOF1EJv3Jip5iDfo=";
     };
 
     npmFlags = ["--legacy-peer-deps"];
@@ -124,7 +124,7 @@
     npmDeps = fetchNpmDeps {
       name = "${pname}-backend-npm-deps";
       src = lockDir ./backend-package-lock.json;
-      hash = "sha256-ly0dUt0CGzTgpcYnmR9DVTkR7HwQuiadtBzE0KSNKY8=";
+      hash = "sha256-QWM0tnYQVMM3ajZqeR7fvL6cHoGcOfVNqq+o2L+XW/M=";
     };
 
     # --ignore-scripts skips the network-dependent postinstalls of prisma,
