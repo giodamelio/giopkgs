@@ -41,7 +41,7 @@ buildNpmPackage {
   npmDeps = fetchNpmDeps {
     name = "pounce-cli-npm-deps";
     src = ./cli-npm;
-    hash = "sha256-5i3Lz6fUMGG6mrf4qvS1eOr4xTmpnPgm76DoOEoy8YY=";
+    hash = "sha256-+p6EJlAYmRLf7q9z93P6tiVH66Oklpcy9mWx//cPIEY=";
   };
 
   nativeBuildInputs = [bun];
