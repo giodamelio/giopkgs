@@ -356,7 +356,7 @@ wheels = [
 
 [[package]]
 name = "llm"
-version = "0.37.1"
+version = "0.37.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -375,9 +375,9 @@ dependencies = [
     { name = "sqlite-utils" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/fd/62/922539af45ed35ebd6de6dcd5676891e75a6c1e94e4d76ac0d2460bd6ad7/llm-0.37.1.tar.gz", hash = "sha256:5c74c8dbeb404d18717a9724761dd1f70f36c3dc4176d4d33668f9e448369e29", size = 159505, upload-time = "2026-11-03T21:45:03.09Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/20/33/fdb966bc2c206bb6114ef3801c77d35b6827a3c04b6e067f1fd373a29f40/llm-0.37.2.tar.gz", hash = "sha256:06a6888e754ac031295f0187d989c0befd2a7f67fbdc857e4bd9a059f51a2ebc", size = 160095, upload-time = "2026-11-11T17:28:30.951Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f6/04/2f613c012d20855a34c161b01745e9fc225f6b7a3c4c08b3cb34657e12fc/llm-0.37.1-py3-none-any.whl", hash = "sha256:fc073354dbb5c8e9615d5baae7e66d6d818b76a347149bd21408fcdc8f87a69a", size = 151233, upload-time = "2026-11-03T21:45:01.351Z" },
+    { url = "https://files.pythonhosted.org/packages/43/70/8a4de4f81d7e7eba291569d9acd7fa77ec794f37ed9cc78fd1d493a43953/llm-0.37.2-py3-none-any.whl", hash = "sha256:93ea485294ef4437e4ff47931b4bef964725da3e6fce48418ef8c517aa669bee", size = 151841, upload-time = "2026-11-11T17:28:29.645Z" },
 ]
 
 [[package]]
@@ -450,16 +450,16 @@ wheels = [
 
 [[package]]
 name = "llm-gemini"
-version = "0.35"
+version = "0.36"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
     { name = "ijson" },
     { name = "llm" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/be/cc/336226070d3ccaa7ecc7568c401ee14d685c27b0a558c23d3891ca8a5a37/llm_gemini-0.35.tar.gz", hash = "sha256:b1890f3adaf7bc7b496c4eba0e35c96277aa476554ac09c1f0223b65d31afcf1", size = 28059, upload-time = "2026-10-13T22:30:01.312Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d5/4e/6e36f7c6fd12cac668f19c7de0bfa4b9fb9edb52f07b8b6383e58b39d698/llm_gemini-0.36.tar.gz", hash = "sha256:95638c50e35b3f69542c4149a015a5b674ef5266439b5f1e7ed747a65c61ae4a", size = 28120, upload-time = "2026-11-10T20:10:44.694Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/86/75/0d1e1627e58e6c4281a03436715ce8109081e04c55804ba323aedc45c7ff/llm_gemini-0.35-py3-none-any.whl", hash = "sha256:b856e8b000a36216efa5661b6f6ca8e00adb5f9d01ec5dd53cf1deacc2e6eca8", size = 19958, upload-time = "2026-10-13T22:29:59.993Z" },
+    { url = "https://files.pythonhosted.org/packages/78/46/548671431b7793b3ca54d8d6d640246c4e5153d07663f090995a8fd4f25f/llm_gemini-0.36-py3-none-any.whl", hash = "sha256:11456ebab1e9a2c83762c916f6b0466d8765ca93c8382aa9652bbe671b518dd0", size = 19999, upload-time = "2026-11-10T20:10:43.405Z" },
 ]
 
 [[package]]
