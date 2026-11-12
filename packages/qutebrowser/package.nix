@@ -24,13 +24,13 @@ in
   (pkgs.qutebrowser.overridePythonAttrs (oldAttrs: {
     dependencies = oldAttrs.dependencies ++ [frizbee];
   })).overrideAttrs (oldAttrs: {
-    version = "3.7.0-unstable-2026-09-28";
+    version = "3.7.0-unstable-2026-11-12";
 
     src = pkgs.fetchFromGitHub {
       owner = "giodamelio";
       repo = "qutebrowser";
-      rev = "e94da1f92f2842ff9094c54fdb84266665c170cc";
-      hash = "sha256-mYAmu29+PT9oOic7khXIFDHVKii0dfQJD66BADkiNdQ=";
+      rev = "c3c7b264d621551cb03903f904376a829e3c99c6";
+      hash = "sha256-N2ZB4PskEu+RhJqG7kyNIR2qAEX4A4b1udTF2MaSxgI=";
     };
 
     meta =
