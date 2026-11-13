@@ -255,14 +255,14 @@
 in
   python.pkgs.buildPythonApplication rec {
     pname = "browser-use";
-    version = "1.0.2";
+    version = "1.0.3";
     pyproject = true;
 
     src = fetchFromGitHub {
       owner = "browser-use";
       repo = "browser-use";
       tag = version;
-      hash = "sha256-/TxjeJtiCXLT9FowmONz/iTLIGN7e1FXGebJJD5Zen0=";
+      hash = "sha256-ZxZYoqXJuoyJGwCyMr9JNifkvW2tQAt7efv8z2CfDj4=";
     };
 
     build-system = [python.pkgs.hatchling];
