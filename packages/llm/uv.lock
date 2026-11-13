@@ -450,30 +450,30 @@ wheels = [
 
 [[package]]
 name = "llm-gemini"
-version = "0.36"
+version = "0.37"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
     { name = "ijson" },
     { name = "llm" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d5/4e/6e36f7c6fd12cac668f19c7de0bfa4b9fb9edb52f07b8b6383e58b39d698/llm_gemini-0.36.tar.gz", hash = "sha256:95638c50e35b3f69542c4149a015a5b674ef5266439b5f1e7ed747a65c61ae4a", size = 28120, upload-time = "2026-11-10T20:10:44.694Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/2c/d1/ba01d3e7a05bee9cb65d8d0702480c6dee0c9892789220dfcbc4a83ead4b/llm_gemini-0.37.tar.gz", hash = "sha256:774eef1a1d8a02a939d873e2e23883d06ba8346349db7a1bad7376ba064ac958", size = 28448, upload-time = "2026-11-12T22:56:32.395Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/78/46/548671431b7793b3ca54d8d6d640246c4e5153d07663f090995a8fd4f25f/llm_gemini-0.36-py3-none-any.whl", hash = "sha256:11456ebab1e9a2c83762c916f6b0466d8765ca93c8382aa9652bbe671b518dd0", size = 19999, upload-time = "2026-11-10T20:10:43.405Z" },
+    { url = "https://files.pythonhosted.org/packages/a6/b6/15f7cdbdc38b6d871f155e2599099ef9f6254905e968fd4b0216b7cd9b27/llm_gemini-0.37-py3-none-any.whl", hash = "sha256:55354558c0e80007c7066c334d2b199c6d05d197883bd242f8110165fa5f19e1", size = 20059, upload-time = "2026-11-12T22:56:31.103Z" },
 ]
 
 [[package]]
 name = "llm-ollama"
-version = "0.19.1"
+version = "0.20.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "llm" },
     { name = "ollama" },
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b1/b9/b4b84696df4320770caf3eb5075881b9df525273926dce15f14e647b45b9/llm_ollama-0.19.1.tar.gz", hash = "sha256:3321de1b546d472e7b21709d8384ebce60ca484dd37c5aa71380abab73549fc7", size = 28191, upload-time = "2026-10-25T13:35:33.512Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/27/38/72b28b4143faa9fe175f72f6198a8009d485c10161f109182c70cc815bfd/llm_ollama-0.20.0.tar.gz", hash = "sha256:3293222ef0f2124c1ff76894569d7611a69b558086695c746d2aeb03c13cc40e", size = 30714, upload-time = "2026-11-13T16:57:47.106Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/3b/3d/627003cbf9829aa705cbcf6d9c21f7f1f8c5c456a93b048f0e74891a2525/llm_ollama-0.19.1-py3-none-any.whl", hash = "sha256:1a316a0f93c2d69dce6ff53e67d078dc8695e3dcc331b0dea85fb0bc7764ece6", size = 25392, upload-time = "2026-10-25T13:35:32.074Z" },
+    { url = "https://files.pythonhosted.org/packages/ba/d8/4a689e34bb2e3244810fd3eb05324d75f1462d4f9df5cfdb1a529b13e309/llm_ollama-0.20.0-py3-none-any.whl", hash = "sha256:14dbf3ba7d9ad582ae00ef42dcf7572d9ac1ba38f0034167e290826fff87fda5", size = 28449, upload-time = "2026-11-13T16:57:45.953Z" },
 ]
 
 [[package]]
@@ -542,7 +542,7 @@ wheels = [
 
 [[package]]
 name = "openai"
-version = "3.49.0"
+version = "3.50.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
@@ -552,9 +552,9 @@ dependencies = [
     { name = "sniffio" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/83/8f/adc3e9f7077c16a2417eebb219df2f5933f4fa532fab143c6bbb1c287c67/openai-3.49.0.tar.gz", hash = "sha256:44badf2bea9bcd643dafa0bc4d5a109a14395889219fd68b8560322288196e96", size = 2410883, upload-time = "2026-11-10T06:47:55.206Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/13/b4/ba46d04d1835d979d89ed7c0d7d94b4ca341b1333e9423c26d97962f6f98/openai-3.50.0.tar.gz", hash = "sha256:ff094ba851ce512e0682f259e8c5bdc4802c7ef5373f68e7fd261261bb4496f2", size = 2411290, upload-time = "2026-11-12T19:26:54.812Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/fe/45/de8fbd25a1ca0a46f9641604a7cb991123daa7f292c27625223d685d9bac/openai-3.49.0-py3-none-any.whl", hash = "sha256:3977754792115027ba80ae16996ba3366478b5b228e1ab58e2660bd7ac8c3d78", size = 2442112, upload-time = "2026-11-10T06:47:52.422Z" },
+    { url = "https://files.pythonhosted.org/packages/12/68/a1d793a10e8a5fe9d5710544475d686e90ed20848dd224b126e6bc64c1a6/openai-3.50.0-py3-none-any.whl", hash = "sha256:7002115247cacb167154a3da4c668d074e61014a661d2c1ac02583da24e2ce19", size = 2442350, upload-time = "2026-11-12T19:26:52.57Z" },
 ]
 
 [[package]]
