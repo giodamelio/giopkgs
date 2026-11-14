@@ -2,13 +2,13 @@
   fetchFromGitHub,
   rustPlatform,
 }: let
-  version = "0.1.0-beta.6";
+  version = "0.2.0";
 
   src = fetchFromGitHub {
     owner = "chicagobuss";
     repo = "crusteo";
     tag = "v${version}";
-    hash = "sha256-9+BqFN1GjlW4QnqUvFT4yH8yI6bPlRqyzlmWXx4KwP4=";
+    hash = "sha256-P9VEzrRQgpqrlQjXKvwmQ6pxDk0YaCtI1QpmT4Vnk/g=";
   };
 in {
   inherit version src;
@@ -18,6 +18,6 @@ in {
   cargoDeps = rustPlatform.fetchCargoVendor {
     inherit src;
     name = "crusteo-${version}";
-    hash = "sha256-HtvoNyDPP8N10Y+G43xFzeczCV1XeAxgpitH6Ds6Xvg=";
+    hash = "sha256-dyr5DwizwW7o0xrViS46bPaNZ3SdE4L/DUuCaSWVDS0=";
   };
 }
