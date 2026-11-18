@@ -5,13 +5,13 @@
   rustPlatform,
   ...
 }: let
-  version = "3.2.6";
+  version = "3.2.7";
 
   src = fetchFromGitHub {
     owner = "parseablehq";
     repo = "parseable";
     tag = "v${version}";
-    hash = "sha256-1qNToYj15BOnQHaRtwWeTKAAgYYbQnjg4syQXot9buc=";
+    hash = "sha256-6Hkpz4bReGjBJjRw3Ni/JGKHjumFw1zf+rQDPNqGxHY=";
   };
 in
   parseable.overrideAttrs (oldAttrs: {
@@ -19,7 +19,7 @@ in
 
     cargoDeps = rustPlatform.fetchCargoVendor {
       inherit src;
-      hash = "sha256-sseuT4uCqndav9n8nYjBoTym7ByE5cLC0tmjJjJuT6I=";
+      hash = "sha256-PmKd0SOKit6se/IVVk0Uh9QLyWyG+lWS9tUE+FyIYCI=";
     };
 
     env =
@@ -27,7 +27,7 @@ in
       // {
         LOCAL_ASSETS_PATH = fetchzip {
           url = "https://parseableprismbuild.blob.core.windows.net/parseable-prism-build/v${version}/build.zip";
-          hash = "sha256-UdV1bPfJMIErEQs9Njx+o+5EqVQN/7CCrmDSiI2gWzA=";
+          hash = "sha256-LvsGPMKUSJV9omBOMMDcd1BmWqffAOLKfo3WHI/fKvE=";
         };
       };
 
