@@ -14,13 +14,13 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "race";
-  version = "1.1.8";
+  version = "1.1.9";
 
   # The unversioned RACE-Linux-x86_64.tar.gz on the site is rebuilt in place, so
   # pin the per-release copy.
   src = fetchurl {
     url = "https://downloads.race-term.com/releases/v${finalAttrs.version}/RACE-Linux-x86_64.tar.gz";
-    hash = "sha256-7tJ1cLRapSMZ21V2TZGHcEwpLN3AEnDWH2nZtI7UUpU=";
+    hash = "sha256-FWQv3uP5cvhklIErvwWOg8DjeRHn25+OO5YjUJuVk7g=";
   };
 
   nativeBuildInputs = [autoPatchelfHook];
