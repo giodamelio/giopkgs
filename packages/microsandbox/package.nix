@@ -10,16 +10,16 @@
   zstd,
   versionCheckHook,
 }: let
-  version = "0.7.16";
+  version = "0.8.1";
 
   src = fetchFromGitHub {
     owner = "superradcompany";
     repo = "microsandbox";
     tag = "v${version}";
-    hash = "sha256-zeITRKw9kV1DD22zYX05QkkcefADrSglIfAlcAShdTs=";
+    hash = "sha256-Dg49o0G9TBW2XeT4I6Q3SS9LnM6sBEyDmSbyoekDu78=";
   };
 
-  cargoHash = "sha256-YutzH5Kz+naR2nGkpKd689kfug/Plb6TIQgDEpKhJPs=";
+  cargoHash = "sha256-WUIEcytTQDRdVk9CEYkeqvu6qih17vqCJm/ka/QCXjQ=";
 
   libkrunfw = callPackage ./libkrunfw.nix {};
 
