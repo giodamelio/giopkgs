@@ -18,8 +18,8 @@ in
     src = fetchFromGitHub {
       owner = "superradcompany";
       repo = "libkrunfw";
-      rev = "d2d271f9699f5b47f090c3717958d5479bc5762d";
-      hash = "sha256-06mjpluKJWFbrc+1HGCg1PPNuDJNgh2hTurzCGigyTs=";
+      rev = "f0493b6f1873ed6031bc0bb87568db0095a6d3b6";
+      hash = "sha256-hCYN1My9++hpS3anb9l065+wYKXyn/i0Dyjqb2rD6Gs=";
     };
 
     kernelSrc = fetchurl {
