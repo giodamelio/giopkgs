@@ -5,13 +5,13 @@
 # nixpkgs bump cannot cause a hash mismatch.
 pkgs.victoriametrics.overrideAttrs (finalAttrs: old: {
   pname = "VictoriaMetrics-cluster";
-  version = "1.156.0-cluster";
+  version = "1.157.0-cluster";
 
   src = pkgs.fetchFromGitHub {
     owner = "VictoriaMetrics";
     repo = "VictoriaMetrics";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-uZYZTScJLvLvuMBYHmPCjqzY39BjbXtr0WWR0bwaxN0=";
+    hash = "sha256-ZqgzZpp89Ia6OX39QAwRheQ7c3qQ50h+4Gbh7oNGhis=";
   };
 
   subPackages = [
