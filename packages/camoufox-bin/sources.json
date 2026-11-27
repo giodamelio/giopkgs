@@ -1,14 +1,14 @@
 {
-  "version": "158.0.1-beta.41",
-  "tag": "v158.0.1-beta.41",
+  "version": "159.0-beta.43",
+  "tag": "v159.0-beta.43",
   "assets": {
     "x86_64-linux": {
-      "url": "https://github.com/daijro/camoufox/releases/download/v158.0.1-beta.41/camoufox-158.0.1-beta.41-lin.x86_64.zip",
-      "hash": "sha256-XHaT5f/dTu2oEyebiPSaxzeRGt//WFKvs64+KdeoqsM="
+      "url": "https://github.com/daijro/camoufox/releases/download/v159.0-beta.43/camoufox-159.0-beta.43-lin.x86_64.zip",
+      "hash": "sha256-os+7GqJLHRXlnVVzhxTg3CMQ8iocM1sX69F9xApA72A="
     },
     "aarch64-linux": {
-      "url": "https://github.com/daijro/camoufox/releases/download/v158.0.1-beta.41/camoufox-158.0.1-beta.41-lin.arm64.zip",
-      "hash": "sha256-RvujGuE2ua1txAA9tYmbmwqRTr0mtmgF9aeHNQUWU6g="
+      "url": "https://github.com/daijro/camoufox/releases/download/v159.0-beta.43/camoufox-159.0-beta.43-lin.arm64.zip",
+      "hash": "sha256-/N0jmZipK6QWeSgOCcRK8nPEiGIrHgDA1yxUmqInHyI="
     }
   }
 }
