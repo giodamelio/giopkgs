@@ -18,7 +18,7 @@
   # Enterprise Edition ships only as a prebuilt binary
   enableEnterprise ? false,
 }: let
-  version = "1.1.2";
+  version = "1.2.0";
 
   commonMeta = {
     description = "Cloud-native observability platform built specifically for logs, metrics, traces, analytics & realtime user-monitoring";
@@ -36,7 +36,7 @@ in
 
       src = fetchurl {
         url = "https://downloads.openobserve.ai/releases/o2-enterprise/v${finalAttrs.version}/openobserve-ee-v${finalAttrs.version}-linux-amd64-musl.tar.gz";
-        hash = "sha256-iorrMRPRRpsVKZ0iOUwdJGLQsA3/ZnOcKgBT2beCqgA=";
+        hash = "sha256-a8udqt8H6slQBag5o6Lx/0QQIBvxpFbd9dGE0XnZIkc=";
       };
 
       # The tarball is a single flat `openobserve` binary.
@@ -88,7 +88,7 @@ in
 
         sourceRoot = "${finalAttrs.src.name}/web";
 
-        npmDepsHash = "sha256-ASI9b7/rXxq2SO6QyxbXLmppiYJtXka7595Y5Y6YygY=";
+        npmDepsHash = "sha256-uodsGkKi+qT/AWj3PdrNlg5H53h4L09SVFcIC1i/ZC0=";
 
         # `generated/` is what scripts/fetch-datasource-content.mjs would have
         # written; `.fetch.json` is the marker it checks to skip the clone.
@@ -130,7 +130,7 @@ in
         owner = "openobserve";
         repo = "openobserve";
         tag = "v${version}";
-        hash = "sha256-9GKdLLm/LaOhCyMGs2ocGwr8ib1hf6g1uIGJ7l/pL68=";
+        hash = "sha256-t7LaOcnKaug3lIwo0iPwqeyT0mS5A9DBatGy0bX1CEs=";
       };
 
       patches = [
@@ -147,7 +147,7 @@ in
         cp -r ${web}/share/openobserve-ui web/dist
       '';
 
-      cargoHash = "sha256-unWuuJv3XaDzgpDYt1CuNOGtxNJwQCxDO3UA6TE9/Zo=";
+      cargoHash = "sha256-vhBGsAsk+FqQE671HyMqDKd/TFgcMNLkG7hIVBSBTNs=";
 
       nativeBuildInputs = [
         pkg-config
